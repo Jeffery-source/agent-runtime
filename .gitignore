@@ -1,0 +1,17 @@
+# IDE
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Build
+bin/
+dist/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
