@@ -1,6 +1,8 @@
 package task
 
-import "time"
+import (
+	"time"
+)
 
 type Status string
 
@@ -9,6 +11,7 @@ const (
 	StatusRunning   Status = "running"
 	StatusCompleted Status = "completed"
 	StatusFailed    Status = "failed"
+	StatusCanceled  Status = "canceled"
 )
 
 type Task struct {
@@ -16,7 +19,13 @@ type Task struct {
 	AgentID   string
 	SessionID string
 	Input     string
-	Status    Status
+
+	Status Status
+
+	Output string
+	Error  string
+
 	CreatedAt time.Time
-	UpdatedAt time.Time
+	StartedAt *time.Time
+	EndedAt   *time.Time
 }

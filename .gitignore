@@ -15,3 +15,5 @@ dist/
 # Environment
 .env
 .env.*
+
+.workbuddy/

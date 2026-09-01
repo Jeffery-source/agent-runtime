@@ -16,7 +16,8 @@ type ToolCall struct {
 }
 
 type Message struct {
-	Role      Role
-	Content   string
-	ToolCalls []ToolCall
+	Role       Role
+	Content    string
+	ToolCalls  []ToolCall
+	ToolCallID string
 }

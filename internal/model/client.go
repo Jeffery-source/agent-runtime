@@ -2,6 +2,12 @@ package model
 
 import "context"
 
+type ToolCall struct {
+	ID        string
+	Name      string
+	Arguments []byte
+}
+
 type Request struct {
 	Model          string
 	Messages       []Message
@@ -10,8 +16,10 @@ type Request struct {
 }
 
 type Message struct {
-	Role    string
-	Content string
+	Role       string
+	Content    string
+	ToolCalls  []ToolCall
+	ToolCallID string
 }
 
 type Response struct {
