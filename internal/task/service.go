@@ -9,6 +9,11 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	defaultWorkers   = 4
+	defaultQueueSize = 128
+)
+
 type Executor interface {
 	Execute(
 		ctx context.Context,
@@ -50,6 +55,11 @@ type Service struct {
 
 	mu      sync.Mutex
 	running map[string]context.CancelFunc
+
+	queue     chan *Task
+	workers   int
+	wg        sync.WaitGroup
+	closeOnce sync.Once
 }
 
 var _ TaskService = (*Service)(nil)
@@ -58,11 +68,82 @@ func NewService(
 	tasks *Manager,
 	executor Executor,
 ) *Service {
-	return &Service{
+	return NewServiceWithPool(
+		tasks,
+		executor,
+		defaultWorkers,
+		defaultQueueSize,
+	)
+}
+
+// NewServiceWithPool 构造带固定大小 Worker 池与有界队列的任务服务。
+func NewServiceWithPool(
+	tasks *Manager,
+	executor Executor,
+	workers int,
+	queueSize int,
+) *Service {
+
+	if workers <= 0 {
+		workers = defaultWorkers
+	}
+	if queueSize <= 0 {
+		queueSize = defaultQueueSize
+	}
+
+	s := &Service{
 		tasks:    tasks,
 		executor: executor,
 		running:  make(map[string]context.CancelFunc),
+		queue:    make(chan *Task, queueSize),
+		workers:  workers,
 	}
+
+	s.start()
+
+	return s
+}
+
+func (s *Service) start() {
+	for i := 0; i < s.workers; i++ {
+		s.wg.Add(1)
+		go s.worker()
+	}
+}
+
+// Shutdown 关闭任务队列并等待所有 Worker 退出。
+func (s *Service) Shutdown() {
+	s.closeOnce.Do(func() {
+		close(s.queue)
+	})
+	s.wg.Wait()
+}
+
+func (s *Service) worker() {
+	defer s.wg.Done()
+
+	for task := range s.queue {
+		s.executeTask(task)
+	}
+}
+
+// executeTask 用独立生命周期执行一个任务，并把取消函数登记到 running。
+func (s *Service) executeTask(task *Task) {
+	taskCtx, cancel := context.WithCancel(context.Background())
+
+	s.mu.Lock()
+	s.running[task.ID] = cancel
+	s.mu.Unlock()
+
+	defer func() {
+		s.mu.Lock()
+		delete(s.running, task.ID)
+		s.mu.Unlock()
+
+		cancel()
+	}()
+
+	_, _ = s.executor.Execute(taskCtx, task.ID)
 }
 
 func (s *Service) Create(
@@ -222,33 +303,13 @@ func (s *Service) Submit(
 		)
 	}
 
-	// 异步任务拥有独立生命周期。
-	taskCtx, cancel := context.WithCancel(
-		context.Background(),
-	)
-
-	s.mu.Lock()
-	s.running[task.ID] = cancel
-	s.mu.Unlock()
-
-	go func(taskID string) {
-
-		defer func() {
-			s.mu.Lock()
-			delete(s.running, taskID)
-			s.mu.Unlock()
-
-			cancel()
-		}()
-
-		_, _ = s.executor.Execute(
-			taskCtx,
-			taskID,
-		)
-
-	}(task.ID)
-
-	return task, nil
+	// 入队有界队列，由 Worker 池异步消费。
+	select {
+	case s.queue <- task:
+		return task, nil
+	default:
+		return nil, ErrQueueFull
+	}
 }
 
 func (s *Service) Cancel(

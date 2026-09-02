@@ -15,17 +15,17 @@ const (
 )
 
 type Task struct {
-	ID        string
-	AgentID   string
-	SessionID string
-	Input     string
+	ID        string `json:"id"`
+	AgentID   string `json:"agent_id"`
+	SessionID string `json:"session_id"`
+	Input     string `json:"input"`
 
-	Status Status
+	Status Status `json:"status"`
 
-	Output string
-	Error  string
+	Output string `json:"output,omitempty"`
+	Error  string `json:"error,omitempty"`
 
-	CreatedAt time.Time
-	StartedAt *time.Time
-	EndedAt   *time.Time
+	CreatedAt time.Time  `json:"created_at"`
+	StartedAt *time.Time `json:"started_at,omitempty"`
+	EndedAt   *time.Time `json:"ended_at,omitempty"`
 }

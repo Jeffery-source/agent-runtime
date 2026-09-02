@@ -4,29 +4,85 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
+// GatewayClient 是 AI 网关（OpenAI 兼容 /chat/completions）的 HTTP 实现。
 type GatewayClient struct {
 	baseURL    string
 	httpClient *http.Client
+	timeout    time.Duration
+	maxRetries int
 }
 
-func NewGatewayClient(baseURL string) *GatewayClient {
-	return &GatewayClient{
-		baseURL:    strings.TrimRight(baseURL, "/"),
-		httpClient: &http.Client{},
+// Option 用于配置 GatewayClient。
+type Option func(*GatewayClient)
+
+// WithTimeout 设置单次请求超时时间。
+func WithTimeout(d time.Duration) Option {
+	return func(c *GatewayClient) {
+		if d > 0 {
+			c.timeout = d
+		}
 	}
 }
 
+// WithRetries 设置网络/服务端错误的重试次数（不含上下文取消）。
+func WithRetries(n int) Option {
+	return func(c *GatewayClient) {
+		if n >= 0 {
+			c.maxRetries = n
+		}
+	}
+}
+
+// WithHTTPClient 注入自定义 http.Client。
+func WithHTTPClient(hc *http.Client) Option {
+	return func(c *GatewayClient) {
+		if hc != nil {
+			c.httpClient = hc
+		}
+	}
+}
+
+// NewGatewayClient 构造网关客户端，默认 30s 超时、不重试。
+func NewGatewayClient(baseURL string, opts ...Option) *GatewayClient {
+	c := &GatewayClient{
+		baseURL:    strings.TrimRight(baseURL, "/"),
+		httpClient: &http.Client{},
+		timeout:    30 * time.Second,
+		maxRetries: 0,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	c.httpClient.Timeout = c.timeout
+	return c
+}
+
 type gatewayRequest struct {
-	Model          string    `json:"model"`
-	Messages       []Message `json:"messages"`
-	Temperature    *float64  `json:"temperature,omitempty"`
-	ConversationID string    `json:"conversation_id,omitempty"`
-	Stream         bool      `json:"stream"`
+	Model          string        `json:"model"`
+	Messages       []Message     `json:"messages"`
+	Temperature    *float64      `json:"temperature,omitempty"`
+	ConversationID string        `json:"conversation_id,omitempty"`
+	Tools          []gatewayTool `json:"tools,omitempty"`
+	Stream         bool          `json:"stream"`
+}
+
+type gatewayTool struct {
+	Type     string          `json:"type"`
+	Function gatewayFunction `json:"function"`
+}
+
+type gatewayFunction struct {
+	Name        string          `json:"name"`
+	Description string          `json:"description"`
+	Parameters  json.RawMessage `json:"parameters,omitempty"`
 }
 
 type gatewayResponse struct {
@@ -48,11 +104,36 @@ func (c *GatewayClient) Chat(
 	request Request,
 ) (*Response, error) {
 
+	var lastErr error
+
+	for attempt := 0; attempt <= c.maxRetries; attempt++ {
+		resp, err := c.chatOnce(ctx, request)
+		if err == nil {
+			return resp, nil
+		}
+
+		lastErr = err
+
+		if errors.Is(err, context.Canceled) ||
+			errors.Is(err, context.DeadlineExceeded) {
+			return nil, err
+		}
+	}
+
+	return nil, lastErr
+}
+
+func (c *GatewayClient) chatOnce(
+	ctx context.Context,
+	request Request,
+) (*Response, error) {
+
 	gatewayReq := gatewayRequest{
 		Model:          request.Model,
 		Messages:       request.Messages,
 		Temperature:    request.Temperature,
 		ConversationID: request.ConversationID,
+		Tools:          toGatewayTools(request.Tools),
 		Stream:         false,
 	}
 
@@ -77,25 +158,24 @@ func (c *GatewayClient) Chat(
 	if err != nil {
 		return nil, fmt.Errorf("call ai gateway: %w", err)
 	}
-
 	defer resp.Body.Close()
 
 	if resp.StatusCode < http.StatusOK ||
 		resp.StatusCode >= http.StatusMultipleChoices {
 
+		msg, _ := io.ReadAll(io.LimitReader(resp.Body, 1024))
+
 		return nil, fmt.Errorf(
-			"ai gateway returned status %d",
+			"ai gateway returned status %d: %s",
 			resp.StatusCode,
+			strings.TrimSpace(string(msg)),
 		)
 	}
 
 	var gatewayResp gatewayResponse
 
 	if err := json.NewDecoder(resp.Body).Decode(&gatewayResp); err != nil {
-		return nil, fmt.Errorf(
-			"decode ai gateway response: %w",
-			err,
-		)
+		return nil, fmt.Errorf("decode ai gateway response: %w", err)
 	}
 
 	if len(gatewayResp.Choices) == 0 {
@@ -112,4 +192,25 @@ func (c *GatewayClient) Chat(
 		Message:      firstChoice.Message,
 		FinishReason: firstChoice.FinishReason,
 	}, nil
+}
+
+func toGatewayTools(defs []ToolDefinition) []gatewayTool {
+	if len(defs) == 0 {
+		return nil
+	}
+
+	tools := make([]gatewayTool, 0, len(defs))
+
+	for _, def := range defs {
+		tools = append(tools, gatewayTool{
+			Type: "function",
+			Function: gatewayFunction{
+				Name:        def.Name,
+				Description: def.Description,
+				Parameters:  json.RawMessage(def.InputSchema),
+			},
+		})
+	}
+
+	return tools
 }

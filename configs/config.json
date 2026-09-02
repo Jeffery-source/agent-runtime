@@ -1,0 +1,13 @@
+{
+  "server": {
+    "addr": ":8080"
+  },
+  "gateway": {
+    "base_url": "",
+    "timeout": "30s",
+    "retries": 1
+  },
+  "workers": 4,
+  "queue_size": 128,
+  "data_dir": "./data"
+}

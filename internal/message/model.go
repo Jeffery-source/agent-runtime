@@ -10,14 +10,14 @@ const (
 )
 
 type ToolCall struct {
-	ID        string
-	Name      string
-	Arguments []byte
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Arguments []byte `json:"arguments,omitempty"`
 }
 
 type Message struct {
-	Role       Role
-	Content    string
-	ToolCalls  []ToolCall
-	ToolCallID string
+	Role       Role       `json:"role"`
+	Content    string     `json:"content,omitempty"`
+	ToolCalls  []ToolCall `json:"tool_calls,omitempty"`
+	ToolCallID string     `json:"tool_call_id,omitempty"`
 }

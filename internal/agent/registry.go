@@ -51,7 +51,7 @@ func (r *Registry) Get(id string) (*Agent, error) {
 		return nil, ErrAgentNotFound
 	}
 
-	return agent, nil
+	return cloneAgent(agent), nil
 }
 
 func (r *Registry) Remove(id string) error {
@@ -74,8 +74,20 @@ func (r *Registry) List() []*Agent {
 	agents := make([]*Agent, 0, len(r.agents))
 
 	for _, agent := range r.agents {
-		agents = append(agents, agent)
+		agents = append(agents, cloneAgent(agent))
 	}
 
 	return agents
+}
+
+// cloneAgent 拷贝 Agent 及其切片字段，避免暴露内部指针。
+func cloneAgent(a *Agent) *Agent {
+	if a == nil {
+		return nil
+	}
+
+	c := *a
+	c.Tools = append([]string(nil), a.Tools...)
+
+	return &c
 }

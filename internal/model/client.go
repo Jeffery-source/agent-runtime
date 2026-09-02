@@ -13,6 +13,14 @@ type Request struct {
 	Messages       []Message
 	Temperature    *float64
 	ConversationID string
+	Tools          []ToolDefinition
+}
+
+// ToolDefinition 描述一个可供模型调用的工具契约。
+type ToolDefinition struct {
+	Name        string
+	Description string
+	InputSchema []byte
 }
 
 type Message struct {

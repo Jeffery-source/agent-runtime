@@ -64,7 +64,7 @@ func (m *Manager) Get(id string) (*Session, error) {
 		return nil, ErrSessionNotFound
 	}
 
-	return session, nil
+	return cloneSession(session), nil
 }
 
 func (m *Manager) Delete(id string) error {
@@ -102,8 +102,28 @@ func (m *Manager) List() []*Session {
 	sessions := make([]*Session, 0, len(m.sessions))
 
 	for _, session := range m.sessions {
-		sessions = append(sessions, session)
+		sessions = append(sessions, cloneSession(session))
 	}
 
 	return sessions
+}
+
+// cloneSession 深拷贝会话，避免把内部指针暴露给调用方导致数据竞争。
+func cloneSession(s *Session) *Session {
+	if s == nil {
+		return nil
+	}
+
+	c := *s
+	c.Messages = make([]message.Message, len(s.Messages))
+
+	for i, msg := range s.Messages {
+		c.Messages[i] = msg
+		c.Messages[i].ToolCalls = append(
+			[]message.ToolCall(nil),
+			msg.ToolCalls...,
+		)
+	}
+
+	return &c
 }

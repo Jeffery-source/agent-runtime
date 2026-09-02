@@ -1,0 +1,169 @@
+{
+  "6b55bfcd-c6b3-4a59-b89f-dcafead61376": [
+    {
+      "role": "user",
+      "content": "现在几点了"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call-get-time",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-01T17:25:14+08:00",
+      "tool_call_id": "call-get-time"
+    },
+    {
+      "role": "assistant",
+      "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    }
+  ],
+  "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed": [
+    {
+      "role": "user",
+      "content": "现在几点了"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call-get-time",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-02T14:30:07+08:00",
+      "tool_call_id": "call-get-time"
+    },
+    {
+      "role": "assistant",
+      "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    }
+  ],
+  "demo-session": [
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call-get-time",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-01T17:23:37+08:00",
+      "tool_call_id": "call-get-time"
+    },
+    {
+      "role": "assistant",
+      "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    },
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call-get-time",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-01T17:24:04+08:00",
+      "tool_call_id": "call-get-time"
+    },
+    {
+      "role": "assistant",
+      "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    },
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call-get-time",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-01T17:24:34+08:00",
+      "tool_call_id": "call-get-time"
+    },
+    {
+      "role": "assistant",
+      "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    },
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call-get-time",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-01T17:25:12+08:00",
+      "tool_call_id": "call-get-time"
+    },
+    {
+      "role": "assistant",
+      "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    },
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call-get-time",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-02T14:27:36+08:00",
+      "tool_call_id": "call-get-time"
+    },
+    {
+      "role": "assistant",
+      "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    }
+  ]
+}

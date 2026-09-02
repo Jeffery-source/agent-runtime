@@ -3,6 +3,12 @@ package runtime
 import "errors"
 
 var (
+	ErrEmptyAgentID = errors.New("agent ID is empty")
+
+	ErrEmptySessionID = errors.New("session ID is empty")
+
+	ErrEmptyInput = errors.New("input is empty")
+
 	ErrAgentNotFound = errors.New("agent not found")
 
 	ErrSessionNotFound = errors.New("session not found")

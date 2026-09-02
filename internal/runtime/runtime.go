@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/Jeffery-source/agent-runtime/internal/agent"
+	"github.com/Jeffery-source/agent-runtime/internal/agentcontext"
+	"github.com/Jeffery-source/agent-runtime/internal/memory"
 	"github.com/Jeffery-source/agent-runtime/internal/message"
 	"github.com/Jeffery-source/agent-runtime/internal/model"
 	"github.com/Jeffery-source/agent-runtime/internal/session"
@@ -21,6 +23,7 @@ type Runtime struct {
 	model    model.Client
 	tools    *tool.Registry
 	tasks    *task.Manager
+	mem      memory.Memory
 }
 
 func New(
@@ -37,6 +40,11 @@ func New(
 		tools:    tools,
 		tasks:    tasks,
 	}
+}
+
+// SetMemory 注入可插拔的会话消息持久化后端。可选：不设置则仅在内存中维护。
+func (r *Runtime) SetMemory(mem memory.Memory) {
+	r.mem = mem
 }
 
 type RunRequest struct {
@@ -57,15 +65,15 @@ func (r *Runtime) Run(
 ) (*RunResponse, error) {
 
 	if req.AgentID == "" {
-		return nil, errors.New("agent ID is empty")
+		return nil, ErrEmptyAgentID
 	}
 
 	if req.SessionID == "" {
-		return nil, errors.New("session ID is empty")
+		return nil, ErrEmptySessionID
 	}
 
 	if req.Input == "" {
-		return nil, errors.New("input is empty")
+		return nil, ErrEmptyInput
 	}
 
 	ag, err := r.agents.Get(req.AgentID)
@@ -86,7 +94,8 @@ func (r *Runtime) Run(
 		)
 	}
 
-	err = r.sessions.AddMessage(
+	err = r.saveMessage(
+		ctx,
 		req.SessionID,
 		message.Message{
 			Role:    message.RoleUser,
@@ -157,35 +166,22 @@ func (r *Runtime) runLoop(
 			)
 		}
 
-		messages := make([]model.Message, 0)
-
-		if ag.SystemPrompt != "" {
-			messages = append(
-				messages,
-				model.Message{
-					Role:    string(message.RoleSystem),
-					Content: ag.SystemPrompt,
-				},
-			)
-		}
-
-		for _, msg := range sessionData.Messages {
-			messages = append(
-				messages,
-				model.Message{
-					Role:       string(msg.Role),
-					Content:    msg.Content,
-					ToolCalls:  convertToModelToolCalls(msg.ToolCalls),
-					ToolCallID: msg.ToolCallID,
-				},
-			)
-		}
+		// 组装上下文：system prompt + 会话历史 + 工具定义。
+		toolDefs := r.toolDefinitions(ag)
+		agentCtx := agentcontext.Build(
+			ag.SystemPrompt,
+			sessionData.Messages,
+			toolDefs,
+		)
 
 		response, err := r.model.Chat(
 			ctx,
 			model.Request{
-				Model:    ag.Model,
-				Messages: messages,
+				Model:          ag.Model,
+				Messages:       agentCtx.ToModelMessages(),
+				Temperature:    ag.Temperature,
+				ConversationID: ag.ConversationID,
+				Tools:          toolDefs,
 			},
 		)
 
@@ -206,7 +202,8 @@ func (r *Runtime) runLoop(
 		// 没有 Tool Call，Agent 完成。
 		if len(response.Message.ToolCalls) == 0 {
 
-			err := r.sessions.AddMessage(
+			err := r.saveMessage(
+				ctx,
 				sessionID,
 				message.Message{
 					Role:    message.RoleAssistant,
@@ -224,7 +221,8 @@ func (r *Runtime) runLoop(
 		}
 
 		// 保存 Assistant Tool Call。
-		err = r.sessions.AddMessage(
+		err = r.saveMessage(
+			ctx,
 			sessionID,
 			message.Message{
 				Role:      message.RoleAssistant,
@@ -251,6 +249,51 @@ func (r *Runtime) runLoop(
 	}
 
 	return "", ErrMaxIterations
+}
+
+// toolDefinitions 把 Agent 配置的工具名解析为工具契约列表。
+func (r *Runtime) toolDefinitions(
+	ag *agent.Agent,
+) []model.ToolDefinition {
+
+	if len(ag.Tools) == 0 {
+		return nil
+	}
+
+	defs := make([]model.ToolDefinition, 0, len(ag.Tools))
+
+	for _, name := range ag.Tools {
+		t, err := r.tools.Get(name)
+		if err != nil {
+			continue
+		}
+		defs = append(defs, model.ToolDefinition{
+			Name:        t.Name(),
+			Description: t.Description(),
+			InputSchema: t.InputSchema(),
+		})
+	}
+
+	return defs
+}
+
+// saveMessage 先写入会话，再（可选）同步到持久化后端。
+func (r *Runtime) saveMessage(
+	ctx context.Context,
+	sessionID string,
+	msg message.Message,
+) error {
+
+	if err := r.sessions.AddMessage(sessionID, msg); err != nil {
+		return err
+	}
+
+	if r.mem != nil {
+		// 持久化失败不阻塞 Agent 主流程。
+		_ = r.mem.Save(ctx, sessionID, msg)
+	}
+
+	return nil
 }
 
 func (r *Runtime) executeToolCalls(
@@ -291,7 +334,8 @@ func (r *Runtime) executeToolCalls(
 			result = err.Error()
 		}
 
-		err = r.sessions.AddMessage(
+		err = r.saveMessage(
+			ctx,
 			sessionID,
 			message.Message{
 				Role:       message.RoleTool,
@@ -325,30 +369,6 @@ func convertToolCalls(
 		result = append(
 			result,
 			message.ToolCall{
-				ID:        call.ID,
-				Name:      call.Name,
-				Arguments: call.Arguments,
-			},
-		)
-	}
-
-	return result
-}
-
-func convertToModelToolCalls(
-	calls []message.ToolCall,
-) []model.ToolCall {
-
-	result := make(
-		[]model.ToolCall,
-		0,
-		len(calls),
-	)
-
-	for _, call := range calls {
-		result = append(
-			result,
-			model.ToolCall{
 				ID:        call.ID,
 				Name:      call.Name,
 				Arguments: call.Arguments,
