@@ -12,9 +12,28 @@ import (
 	"time"
 )
 
+type gatewayToolCall struct {
+	ID       string              `json:"id"`
+	Type     string              `json:"type"`
+	Function gatewayFunctionCall `json:"function"`
+}
+
+type gatewayFunctionCall struct {
+	Name      string `json:"name"`
+	Arguments string `json:"arguments"`
+}
+
+type gatewayMessage struct {
+	Role       string            `json:"role"`
+	Content    string            `json:"content"`
+	ToolCalls  []gatewayToolCall `json:"tool_calls,omitempty"`
+	ToolCallID string            `json:"tool_call_id,omitempty"`
+}
+
 // GatewayClient 是 AI 网关（OpenAI 兼容 /chat/completions）的 HTTP 实现。
 type GatewayClient struct {
 	baseURL    string
+	apiKey     string
 	httpClient *http.Client
 	timeout    time.Duration
 	maxRetries int
@@ -22,6 +41,12 @@ type GatewayClient struct {
 
 // Option 用于配置 GatewayClient。
 type Option func(*GatewayClient)
+
+func WithAPIKey(apiKey string) Option {
+	return func(c *GatewayClient) {
+		c.apiKey = apiKey
+	}
+}
 
 // WithTimeout 设置单次请求超时时间。
 func WithTimeout(d time.Duration) Option {
@@ -94,9 +119,9 @@ type gatewayResponse struct {
 }
 
 type choice struct {
-	Index        int     `json:"index"`
-	Message      Message `json:"message"`
-	FinishReason string  `json:"finish_reason"`
+	Index        int            `json:"index"`
+	Message      gatewayMessage `json:"message"`
+	FinishReason string         `json:"finish_reason"`
 }
 
 func (c *GatewayClient) Chat(
@@ -154,6 +179,10 @@ func (c *GatewayClient) chatOnce(
 
 	req.Header.Set("Content-Type", "application/json")
 
+	if c.apiKey != "" {
+		req.Header.Set("Authorization", "Bearer "+c.apiKey)
+	}
+
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("call ai gateway: %w", err)
@@ -189,7 +218,7 @@ func (c *GatewayClient) chatOnce(
 	return &Response{
 		ID:           gatewayResp.ID,
 		Model:        gatewayResp.Model,
-		Message:      firstChoice.Message,
+		Message:      convertGatewayMessage(firstChoice.Message),
 		FinishReason: firstChoice.FinishReason,
 	}, nil
 }
@@ -213,4 +242,22 @@ func toGatewayTools(defs []ToolDefinition) []gatewayTool {
 	}
 
 	return tools
+}
+
+func convertGatewayMessage(msg gatewayMessage) Message {
+	result := Message{
+		Role:       msg.Role,
+		Content:    msg.Content,
+		ToolCallID: msg.ToolCallID,
+	}
+
+	for _, tc := range msg.ToolCalls {
+		result.ToolCalls = append(result.ToolCalls, ToolCall{
+			ID:        tc.ID,
+			Name:      tc.Function.Name,
+			Arguments: []byte(tc.Function.Arguments),
+		})
+	}
+
+	return result
 }

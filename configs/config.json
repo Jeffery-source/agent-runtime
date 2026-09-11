@@ -1,9 +1,9 @@
 {
   "server": {
-    "addr": ":8080"
+    "addr": ":8081"
   },
   "gateway": {
-    "base_url": "",
+    "base_url": "http://localhost:8080/v1",
     "timeout": "30s",
     "retries": 1
   },

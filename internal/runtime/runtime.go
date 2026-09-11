@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/Jeffery-source/agent-runtime/internal/agent"
 	"github.com/Jeffery-source/agent-runtime/internal/agentcontext"
@@ -174,6 +175,13 @@ func (r *Runtime) runLoop(
 			toolDefs,
 		)
 
+		log.Printf(
+			"[agent] iteration=%d model=%s messages=%d tools=%d",
+			iteration+1,
+			ag.Model,
+			len(agentCtx.ToModelMessages()),
+			len(toolDefs),
+		)
 		response, err := r.model.Chat(
 			ctx,
 			model.Request{
@@ -198,10 +206,19 @@ func (r *Runtime) runLoop(
 				err,
 			)
 		}
-
+		log.Printf(
+			"[agent] iteration=%d finish_reason=%s tool_calls=%d",
+			iteration+1,
+			response.FinishReason,
+			len(response.Message.ToolCalls),
+		)
 		// 没有 Tool Call，Agent 完成。
 		if len(response.Message.ToolCalls) == 0 {
-
+			log.Printf(
+				"[agent] final_response iteration=%d content=%s",
+				iteration+1,
+				response.Message.Content,
+			)
 			err := r.saveMessage(
 				ctx,
 				sessionID,
@@ -236,7 +253,14 @@ func (r *Runtime) runLoop(
 				err,
 			)
 		}
-
+		for _, call := range response.Message.ToolCalls {
+			log.Printf(
+				"[agent] tool_call id=%s name=%s arguments=%s",
+				call.ID,
+				call.Name,
+				string(call.Arguments),
+			)
+		}
 		// 执行 Tool Calls。
 		err = r.executeToolCalls(
 			ctx,
@@ -318,12 +342,21 @@ func (r *Runtime) executeToolCalls(
 				err,
 			)
 		}
-
+		log.Printf(
+			"[agent] executing_tool name=%s arguments=%s",
+			toolCall.Name,
+			string(toolCall.Arguments),
+		)
 		result, err := t.Execute(
 			ctx,
 			toolCall.Arguments,
 		)
-
+		log.Printf(
+			"[agent] tool_result name=%s result=%s error=%v",
+			toolCall.Name,
+			result,
+			err,
+		)
 		if err != nil {
 			if errors.Is(err, context.Canceled) ||
 				errors.Is(err, context.DeadlineExceeded) {

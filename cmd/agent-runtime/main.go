@@ -119,6 +119,7 @@ func newModelClient(cfg *config.Config) model.Client {
 			cfg.Gateway.BaseURL,
 			model.WithTimeout(cfg.GatewayTimeout()),
 			model.WithRetries(cfg.Gateway.Retries),
+			model.WithAPIKey(os.Getenv("AI_GATEWAY_API_KEY")),
 		)
 	}
 
@@ -146,8 +147,8 @@ func demoAgent() *agent.Agent {
 	return &agent.Agent{
 		ID:            "demo-agent",
 		Name:          "Demo Agent",
-		Description:   "演示用 Agent",
-		Model:         "demo-model",
+		Description:   "你是一个助手。当用户询问当前时间时，使用 get_time 工具获取时间。",
+		Model:         "qwen3",
 		SystemPrompt:  "You are a helpful assistant.",
 		Tools:         []string{"get_time"},
 		MaxIterations: 5,

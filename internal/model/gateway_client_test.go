@@ -73,7 +73,7 @@ func TestGatewayClientChat(t *testing.T) {
 				Choices: []choice{
 					{
 						Index: 0,
-						Message: Message{
+						Message: gatewayMessage{
 							Role:    "assistant",
 							Content: "你好，我是 AI Assistant。",
 						},

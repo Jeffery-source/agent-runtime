@@ -1,5 +1,79 @@
 [
   {
+    "id": "a7a4aeec-7111-43bf-8300-5b33c40999b7",
+    "agent_id": "demo-agent",
+    "session_id": "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed",
+    "input": "现在几点了",
+    "status": "completed",
+    "output": "演示闭环完成：已通过 get_time 工具获取时间。",
+    "created_at": "2026-09-02T14:30:07.23113+08:00",
+    "started_at": "2026-09-02T14:30:07.231166+08:00",
+    "ended_at": "2026-09-02T14:30:07.231904+08:00"
+  },
+  {
+    "id": "7f95f383-f09a-467d-8f38-2c63e4927765",
+    "agent_id": "demo-agent",
+    "session_id": "96046ccc-fe84-479b-a578-9473e9f370c9",
+    "input": "现在几点？",
+    "status": "completed",
+    "created_at": "2026-09-11T15:35:00.117596+08:00",
+    "started_at": "2026-09-11T15:35:00.117664+08:00",
+    "ended_at": "2026-09-11T15:35:10.391802+08:00"
+  },
+  {
+    "id": "fffb1f6e-c05c-497a-89e5-f9e50bed993e",
+    "agent_id": "demo-agent",
+    "session_id": "23d33e8c-8215-4ee7-a395-faf6f468b187",
+    "input": "现在几点？",
+    "status": "failed",
+    "error": "tool not found: tool not found",
+    "created_at": "2026-09-11T15:53:49.546512+08:00",
+    "started_at": "2026-09-11T15:53:49.54655+08:00",
+    "ended_at": "2026-09-11T15:53:58.742379+08:00"
+  },
+  {
+    "id": "b6a5cf14-7296-4e60-90dd-faadb1a7a80c",
+    "agent_id": "demo-agent",
+    "session_id": "cc90dd6b-66dc-4146-b015-e14b0b48ee87",
+    "input": "你好，请简单介绍一下你自己",
+    "status": "completed",
+    "output": "你好！我是通义千问，由通义实验室开发的超大规模语言模型。我能够帮助你回答问题、创作文字、逻辑推理、编程等，并且支持多种语言，包括中文、英文、日文、韩文等。我的目标是成为你日常生活和工作中的智能助手，无论你需要讨论有趣的话题、解决复杂问题，还是单纯想聊天，我都会尽力提供帮助。有什么问题或需要协助的吗？😊",
+    "created_at": "2026-09-11T14:10:12.728096+08:00",
+    "started_at": "2026-09-11T14:10:12.728119+08:00",
+    "ended_at": "2026-09-11T14:10:26.448806+08:00"
+  },
+  {
+    "id": "174d27b8-d3cf-41a8-b58b-4c13c48eab9c",
+    "agent_id": "demo-agent",
+    "session_id": "2a59ee7a-5266-4c70-97c9-92ecb5e846f8",
+    "input": "你好，请简单介绍一下你自己",
+    "status": "failed",
+    "error": "model call failed: ai gateway returned status 401: {\"error\":{\"code\":\"invalid_api_key\",\"message\":\"missing authorization header\",\"type\":\"authentication_error\"}}",
+    "created_at": "2026-09-11T14:02:21.889685+08:00",
+    "started_at": "2026-09-11T14:02:21.889742+08:00",
+    "ended_at": "2026-09-11T14:02:21.893323+08:00"
+  },
+  {
+    "id": "3dce8f10-ec83-4461-9e6e-c7b5bbae0fc9",
+    "agent_id": "demo-agent",
+    "session_id": "dd3bdfcf-4152-415c-99d2-c89f85c78b2e",
+    "input": "我想知道现在的时间",
+    "status": "completed",
+    "created_at": "2026-09-11T15:20:14.533822+08:00",
+    "started_at": "2026-09-11T15:20:14.533865+08:00",
+    "ended_at": "2026-09-11T15:20:23.206057+08:00"
+  },
+  {
+    "id": "dc079d63-f972-4658-8db7-96ed525c920f",
+    "agent_id": "demo-agent",
+    "session_id": "a6aeba8a-7888-4a69-9ae8-1499c9150af6",
+    "input": "现在几点？",
+    "status": "completed",
+    "created_at": "2026-09-11T15:26:02.766071+08:00",
+    "started_at": "2026-09-11T15:26:02.766126+08:00",
+    "ended_at": "2026-09-11T15:26:12.285337+08:00"
+  },
+  {
     "id": "d2241e26-5a81-420b-8872-4db91c79da3a",
     "agent_id": "demo-agent",
     "session_id": "6b55bfcd-c6b3-4a59-b89f-dcafead61376",
@@ -11,14 +85,14 @@
     "ended_at": "2026-09-01T17:25:14.907687+08:00"
   },
   {
-    "id": "a7a4aeec-7111-43bf-8300-5b33c40999b7",
+    "id": "9b50491d-06a9-48b5-9de9-0f2b0a63ce93",
     "agent_id": "demo-agent",
-    "session_id": "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed",
-    "input": "现在几点了",
+    "session_id": "298b28f6-fe35-4aca-866f-06f33c6810d9",
+    "input": "现在几点？",
     "status": "completed",
-    "output": "演示闭环完成：已通过 get_time 工具获取时间。",
-    "created_at": "2026-09-02T14:30:07.23113+08:00",
-    "started_at": "2026-09-02T14:30:07.231166+08:00",
-    "ended_at": "2026-09-02T14:30:07.231904+08:00"
+    "output": "现在是北京时间2026年9月11日 下午4点01分。",
+    "created_at": "2026-09-11T16:01:11.715237+08:00",
+    "started_at": "2026-09-11T16:01:11.715277+08:00",
+    "ended_at": "2026-09-11T16:01:29.546442+08:00"
   }
 ]

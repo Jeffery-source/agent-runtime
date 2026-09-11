@@ -1,4 +1,50 @@
 {
+  "23d33e8c-8215-4ee7-a395-faf6f468b187": [
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_gysbjxnp",
+          "name": ""
+        }
+      ]
+    }
+  ],
+  "298b28f6-fe35-4aca-866f-06f33c6810d9": [
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_dt5f5nva",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-11T16:01:22+08:00",
+      "tool_call_id": "call_dt5f5nva"
+    },
+    {
+      "role": "assistant",
+      "content": "现在是北京时间2026年9月11日 下午4点01分。"
+    }
+  ],
+  "2a59ee7a-5266-4c70-97c9-92ecb5e846f8": [
+    {
+      "role": "user",
+      "content": "你好，请简单介绍一下你自己"
+    }
+  ],
   "6b55bfcd-c6b3-4a59-b89f-dcafead61376": [
     {
       "role": "user",
@@ -24,6 +70,24 @@
       "content": "演示闭环完成：已通过 get_time 工具获取时间。"
     }
   ],
+  "96046ccc-fe84-479b-a578-9473e9f370c9": [
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant"
+    }
+  ],
+  "a6aeba8a-7888-4a69-9ae8-1499c9150af6": [
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant"
+    }
+  ],
   "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed": [
     {
       "role": "user",
@@ -47,6 +111,25 @@
     {
       "role": "assistant",
       "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    }
+  ],
+  "cc90dd6b-66dc-4146-b015-e14b0b48ee87": [
+    {
+      "role": "user",
+      "content": "你好，请简单介绍一下你自己"
+    },
+    {
+      "role": "assistant",
+      "content": "你好！我是通义千问，由通义实验室开发的超大规模语言模型。我能够帮助你回答问题、创作文字、逻辑推理、编程等，并且支持多种语言，包括中文、英文、日文、韩文等。我的目标是成为你日常生活和工作中的智能助手，无论你需要讨论有趣的话题、解决复杂问题，还是单纯想聊天，我都会尽力提供帮助。有什么问题或需要协助的吗？😊"
+    }
+  ],
+  "dd3bdfcf-4152-415c-99d2-c89f85c78b2e": [
+    {
+      "role": "user",
+      "content": "我想知道现在的时间"
+    },
+    {
+      "role": "assistant"
     }
   ],
   "demo-session": [
@@ -159,6 +242,29 @@
     {
       "role": "tool",
       "content": "2026-09-02T14:27:36+08:00",
+      "tool_call_id": "call-get-time"
+    },
+    {
+      "role": "assistant",
+      "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    },
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call-get-time",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-08T15:24:15+08:00",
       "tool_call_id": "call-get-time"
     },
     {
