@@ -244,6 +244,41 @@
       "role": "assistant"
     }
   ],
+  "a7956110-42fb-422a-92ff-7c8363aecdcf": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_m3j6152o",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_6xz0byif",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-14T15:29:23+08:00",
+      "tool_call_id": "call_m3j6152o"
+    },
+    {
+      "role": "tool",
+      "content": "6",
+      "tool_call_id": "call_6xz0byif"
+    },
+    {
+      "role": "assistant",
+      "content": "当前时间是2026年9月14日 15:29，您的余额为6元。"
+    }
+  ],
   "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed": [
     {
       "role": "user",

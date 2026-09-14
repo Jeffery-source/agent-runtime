@@ -17,6 +17,7 @@ import (
 	"github.com/Jeffery-source/agent-runtime/internal/model"
 	"github.com/Jeffery-source/agent-runtime/internal/runtime"
 	"github.com/Jeffery-source/agent-runtime/internal/session"
+	"github.com/Jeffery-source/agent-runtime/internal/skill"
 	"github.com/Jeffery-source/agent-runtime/internal/task"
 	"github.com/Jeffery-source/agent-runtime/internal/tool"
 	"github.com/Jeffery-source/agent-runtime/internal/transport"
@@ -36,12 +37,28 @@ func main() {
 	sessions := session.NewManager()
 	tools := tool.NewRegistry()
 	taskManager := task.NewManager()
+	skills := skill.NewRegistry()
+	if err := skills.Register(&skill.Skill{
+		ID:          "demo_skill",
+		Name:        "Demo Skill",
+		Description: "用于测试 Agent Skill",
+		Instructions: `
+你正在使用 Demo Skill。
 
+回答问题时：
+1. 优先分析用户的问题
+2. 如果需要实时信息，使用可用工具获取
+3. 获取工具结果后再给出最终答案
+`,
+	}); err != nil {
+		log.Fatalf("register skill: %v", err)
+	}
 	// 3. 模型客户端：优先真实 AI 网关，否则用演示模型。
 	modelClient := newModelClient(cfg)
 
 	// 4. Runtime 与任务服务（Worker 池）。
 	rt := runtime.New(agents, sessions, modelClient, tools, taskManager)
+	rt.SetSkillRegistry(skills)
 	executor := runtime.NewExecutor(taskManager, rt)
 	taskService := task.NewServiceWithPool(
 		taskManager,
@@ -72,6 +89,7 @@ func main() {
 			log.Fatalf("register tool %s: %v", t.Name(), err)
 		}
 	}
+
 	if err := agents.Register(demoAgent()); err != nil {
 		log.Fatalf("register agent: %v", err)
 	}
@@ -152,11 +170,14 @@ func newMemory(cfg *config.Config) memory.Memory {
 
 func demoAgent() *agent.Agent {
 	return &agent.Agent{
-		ID:            "demo-agent",
-		Name:          "Demo Agent",
-		Description:   "你是一个助手。当用户询问当前时间时，使用 get_time 工具获取时间。",
-		Model:         "qwen3",
-		SystemPrompt:  "You are a helpful assistant.",
+		ID:           "demo-agent",
+		Name:         "Demo Agent",
+		Description:  "你是一个助手。当用户询问当前时间时，使用 get_time 工具获取时间。",
+		Model:        "qwen3",
+		SystemPrompt: "You are a helpful assistant.",
+		Skills: []string{
+			"demo_skill",
+		},
 		Tools:         []string{"get_time", "get_money"},
 		MaxIterations: 5,
 	}

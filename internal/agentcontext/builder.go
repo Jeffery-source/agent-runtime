@@ -8,14 +8,16 @@ import (
 // Build 组装一次 Agent 运行的上下文产物。
 func Build(
 	systemPrompt string,
+	skillInstructions string,
 	messages []message.Message,
 	tools []ToolDefinition,
 ) *AgentContext {
 
 	return &AgentContext{
-		SystemPrompt:    systemPrompt,
-		Messages:        messages,
-		ToolDefinitions: tools,
+		SystemPrompt:      systemPrompt,
+		SkillInstructions: skillInstructions,
+		Messages:          messages,
+		ToolDefinitions:   tools,
 	}
 }
 
@@ -23,10 +25,21 @@ func Build(
 func (c *AgentContext) ToModelMessages() []model.Message {
 	msgs := make([]model.Message, 0, len(c.Messages)+1)
 
-	if c.SystemPrompt != "" {
+	systemPrompt := c.SystemPrompt
+
+	if c.SkillInstructions != "" {
+		if systemPrompt != "" {
+			systemPrompt += "\n\n"
+		}
+
+		systemPrompt += "## Skill Instructions\n"
+		systemPrompt += c.SkillInstructions
+	}
+
+	if systemPrompt != "" {
 		msgs = append(msgs, model.Message{
 			Role:    string(message.RoleSystem),
-			Content: c.SystemPrompt,
+			Content: systemPrompt,
 		})
 	}
 

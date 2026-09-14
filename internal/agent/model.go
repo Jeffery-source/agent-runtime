@@ -6,6 +6,7 @@ type Agent struct {
 	Description    string
 	Model          string
 	SystemPrompt   string
+	Skills         []string
 	Tools          []string
 	MaxIterations  int
 	Temperature    *float64

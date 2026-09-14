@@ -6,9 +6,10 @@ import (
 )
 
 type AgentContext struct {
-	SystemPrompt    string
-	Messages        []message.Message
-	ToolDefinitions []model.ToolDefinition
+	SystemPrompt      string
+	SkillInstructions string
+	Messages          []message.Message
+	ToolDefinitions   []model.ToolDefinition
 }
 
 // ToolDefinition 复用 model 包的定义，避免类型重复。

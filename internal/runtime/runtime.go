@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/Jeffery-source/agent-runtime/internal/agent"
 	"github.com/Jeffery-source/agent-runtime/internal/agentcontext"
@@ -12,6 +13,7 @@ import (
 	"github.com/Jeffery-source/agent-runtime/internal/message"
 	"github.com/Jeffery-source/agent-runtime/internal/model"
 	"github.com/Jeffery-source/agent-runtime/internal/session"
+	"github.com/Jeffery-source/agent-runtime/internal/skill"
 	"github.com/Jeffery-source/agent-runtime/internal/task"
 	"github.com/Jeffery-source/agent-runtime/internal/tool"
 )
@@ -23,6 +25,7 @@ type Runtime struct {
 	sessions *session.Manager
 	model    model.Client
 	tools    *tool.Registry
+	skills   *skill.Registry
 	tasks    *task.Manager
 	mem      memory.Memory
 }
@@ -40,6 +43,14 @@ func New(
 		model:    modelClient,
 		tools:    tools,
 		tasks:    tasks,
+		skills:   skill.NewRegistry(),
+	}
+}
+func (r *Runtime) SetSkillRegistry(
+	skills *skill.Registry,
+) {
+	if skills != nil {
+		r.skills = skills
 	}
 }
 
@@ -137,7 +148,26 @@ func (r *Runtime) Run(
 		Status:    RunStatusCompleted,
 	}, nil
 }
+func (r *Runtime) skillInstructions(ag *agent.Agent) string {
+	if r.skills == nil || len(ag.Skills) == 0 {
+		return ""
+	}
 
+	var instructions []string
+
+	for _, skillID := range ag.Skills {
+		s, ok := r.skills.Get(skillID)
+		if !ok {
+			continue
+		}
+
+		if s.Instructions != "" {
+			instructions = append(instructions, s.Instructions)
+		}
+	}
+
+	return strings.Join(instructions, "\n\n")
+}
 func (r *Runtime) runLoop(
 	ctx context.Context,
 	ag *agent.Agent,
@@ -167,19 +197,24 @@ func (r *Runtime) runLoop(
 			)
 		}
 
+		skillDefs := r.skillDefinitions(ag)
+		skillInstructions := r.skillInstructions(ag)
+
 		// 组装上下文：system prompt + 会话历史 + 工具定义。
 		toolDefs := r.toolDefinitions(ag)
 		agentCtx := agentcontext.Build(
 			ag.SystemPrompt,
+			skillInstructions,
 			sessionData.Messages,
 			toolDefs,
 		)
 
 		log.Printf(
-			"[agent] iteration=%d model=%s messages=%d tools=%d",
+			"[agent] iteration=%d model=%s messages=%d skills=%d tools=%d",
 			iteration+1,
 			ag.Model,
 			len(agentCtx.ToModelMessages()),
+			len(skillDefs),
 			len(toolDefs),
 		)
 		response, err := r.model.Chat(
@@ -273,6 +308,33 @@ func (r *Runtime) runLoop(
 	}
 
 	return "", ErrMaxIterations
+}
+
+// skillDefinitions 把 Agent 配置的 Skill 名称解析为 Skill 列表。
+func (r *Runtime) skillDefinitions(
+	ag *agent.Agent,
+) []*skill.Skill {
+
+	if len(ag.Skills) == 0 {
+		return nil
+	}
+
+	skills := make([]*skill.Skill, 0, len(ag.Skills))
+
+	for _, id := range ag.Skills {
+		s, ok := r.skills.Get(id)
+		if !ok {
+			log.Printf(
+				"[agent] skill_not_found id=%s",
+				id,
+			)
+			continue
+		}
+
+		skills = append(skills, s)
+	}
+
+	return skills
 }
 
 // toolDefinitions 把 Agent 配置的工具名解析为工具契约列表。
