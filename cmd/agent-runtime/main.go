@@ -61,9 +61,16 @@ func main() {
 	)
 	restoreTasks(taskManager, taskStore)
 
+	demoTools := []tool.Tool{
+		&timeTool{},
+		&MoneyTool{},
+	}
 	// 7. 注册演示工具与 Agent。
-	if err := tools.Register(&timeTool{}); err != nil {
-		log.Fatalf("register tool: %v", err)
+
+	for _, t := range demoTools {
+		if err := tools.Register(t); err != nil {
+			log.Fatalf("register tool %s: %v", t.Name(), err)
+		}
 	}
 	if err := agents.Register(demoAgent()); err != nil {
 		log.Fatalf("register agent: %v", err)
@@ -150,7 +157,7 @@ func demoAgent() *agent.Agent {
 		Description:   "你是一个助手。当用户询问当前时间时，使用 get_time 工具获取时间。",
 		Model:         "qwen3",
 		SystemPrompt:  "You are a helpful assistant.",
-		Tools:         []string{"get_time"},
+		Tools:         []string{"get_time", "get_money"},
 		MaxIterations: 5,
 	}
 }

@@ -1,24 +1,25 @@
 [
   {
-    "id": "a7a4aeec-7111-43bf-8300-5b33c40999b7",
+    "id": "991f4adf-feb8-4e1b-bc17-72371ec1b564",
     "agent_id": "demo-agent",
-    "session_id": "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed",
-    "input": "现在几点了",
-    "status": "completed",
-    "output": "演示闭环完成：已通过 get_time 工具获取时间。",
-    "created_at": "2026-09-02T14:30:07.23113+08:00",
-    "started_at": "2026-09-02T14:30:07.231166+08:00",
-    "ended_at": "2026-09-02T14:30:07.231904+08:00"
-  },
-  {
-    "id": "7f95f383-f09a-467d-8f38-2c63e4927765",
-    "agent_id": "demo-agent",
-    "session_id": "96046ccc-fe84-479b-a578-9473e9f370c9",
+    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
     "input": "现在几点？",
     "status": "completed",
-    "created_at": "2026-09-11T15:35:00.117596+08:00",
-    "started_at": "2026-09-11T15:35:00.117664+08:00",
-    "ended_at": "2026-09-11T15:35:10.391802+08:00"
+    "output": "当前时间是2026年9月14日13点54分44秒（UTC+8）。",
+    "created_at": "2026-09-14T13:54:29.946408+08:00",
+    "started_at": "2026-09-14T13:54:29.946454+08:00",
+    "ended_at": "2026-09-14T13:54:50.189447+08:00"
+  },
+  {
+    "id": "1bb378b8-0fc3-46eb-9f1e-b75892165a42",
+    "agent_id": "demo-agent",
+    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
+    "input": "还有多少余额？",
+    "status": "completed",
+    "output": "当前货币余额为8元。",
+    "created_at": "2026-09-14T13:56:10.28855+08:00",
+    "started_at": "2026-09-14T13:56:10.288578+08:00",
+    "ended_at": "2026-09-14T13:56:25.336217+08:00"
   },
   {
     "id": "fffb1f6e-c05c-497a-89e5-f9e50bed993e",
@@ -30,6 +31,60 @@
     "created_at": "2026-09-11T15:53:49.546512+08:00",
     "started_at": "2026-09-11T15:53:49.54655+08:00",
     "ended_at": "2026-09-11T15:53:58.742379+08:00"
+  },
+  {
+    "id": "3dce8f10-ec83-4461-9e6e-c7b5bbae0fc9",
+    "agent_id": "demo-agent",
+    "session_id": "dd3bdfcf-4152-415c-99d2-c89f85c78b2e",
+    "input": "我想知道现在的时间",
+    "status": "completed",
+    "created_at": "2026-09-11T15:20:14.533822+08:00",
+    "started_at": "2026-09-11T15:20:14.533865+08:00",
+    "ended_at": "2026-09-11T15:20:23.206057+08:00"
+  },
+  {
+    "id": "d2241e26-5a81-420b-8872-4db91c79da3a",
+    "agent_id": "demo-agent",
+    "session_id": "6b55bfcd-c6b3-4a59-b89f-dcafead61376",
+    "input": "现在几点了",
+    "status": "completed",
+    "output": "演示闭环完成：已通过 get_time 工具获取时间。",
+    "created_at": "2026-09-01T17:25:14.907295+08:00",
+    "started_at": "2026-09-01T17:25:14.907311+08:00",
+    "ended_at": "2026-09-01T17:25:14.907687+08:00"
+  },
+  {
+    "id": "a7a4aeec-7111-43bf-8300-5b33c40999b7",
+    "agent_id": "demo-agent",
+    "session_id": "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed",
+    "input": "现在几点了",
+    "status": "completed",
+    "output": "演示闭环完成：已通过 get_time 工具获取时间。",
+    "created_at": "2026-09-02T14:30:07.23113+08:00",
+    "started_at": "2026-09-02T14:30:07.231166+08:00",
+    "ended_at": "2026-09-02T14:30:07.231904+08:00"
+  },
+  {
+    "id": "f2bde41a-1a5e-4798-bf1f-2c322bc3ae01",
+    "agent_id": "demo-agent",
+    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "当前时间是2026年9月14日13点57分31秒（UTC+8），货币余额为5元。",
+    "created_at": "2026-09-14T13:57:04.479946+08:00",
+    "started_at": "2026-09-14T13:57:04.479958+08:00",
+    "ended_at": "2026-09-14T13:57:43.956642+08:00"
+  },
+  {
+    "id": "b0142e41-0097-4766-b7ee-bcf6bf094cf2",
+    "agent_id": "demo-agent",
+    "session_id": "7e1085f1-6e4d-491c-ac1e-cbd9404ff85d",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在的时间是2026年9月14日14点01分，您的货币余额为2元。",
+    "created_at": "2026-09-14T14:00:55.244769+08:00",
+    "started_at": "2026-09-14T14:00:55.244803+08:00",
+    "ended_at": "2026-09-14T14:01:10.298396+08:00"
   },
   {
     "id": "b6a5cf14-7296-4e60-90dd-faadb1a7a80c",
@@ -54,16 +109,6 @@
     "ended_at": "2026-09-11T14:02:21.893323+08:00"
   },
   {
-    "id": "3dce8f10-ec83-4461-9e6e-c7b5bbae0fc9",
-    "agent_id": "demo-agent",
-    "session_id": "dd3bdfcf-4152-415c-99d2-c89f85c78b2e",
-    "input": "我想知道现在的时间",
-    "status": "completed",
-    "created_at": "2026-09-11T15:20:14.533822+08:00",
-    "started_at": "2026-09-11T15:20:14.533865+08:00",
-    "ended_at": "2026-09-11T15:20:23.206057+08:00"
-  },
-  {
     "id": "dc079d63-f972-4658-8db7-96ed525c920f",
     "agent_id": "demo-agent",
     "session_id": "a6aeba8a-7888-4a69-9ae8-1499c9150af6",
@@ -72,17 +117,6 @@
     "created_at": "2026-09-11T15:26:02.766071+08:00",
     "started_at": "2026-09-11T15:26:02.766126+08:00",
     "ended_at": "2026-09-11T15:26:12.285337+08:00"
-  },
-  {
-    "id": "d2241e26-5a81-420b-8872-4db91c79da3a",
-    "agent_id": "demo-agent",
-    "session_id": "6b55bfcd-c6b3-4a59-b89f-dcafead61376",
-    "input": "现在几点了",
-    "status": "completed",
-    "output": "演示闭环完成：已通过 get_time 工具获取时间。",
-    "created_at": "2026-09-01T17:25:14.907295+08:00",
-    "started_at": "2026-09-01T17:25:14.907311+08:00",
-    "ended_at": "2026-09-01T17:25:14.907687+08:00"
   },
   {
     "id": "9b50491d-06a9-48b5-9de9-0f2b0a63ce93",
@@ -94,5 +128,26 @@
     "created_at": "2026-09-11T16:01:11.715237+08:00",
     "started_at": "2026-09-11T16:01:11.715277+08:00",
     "ended_at": "2026-09-11T16:01:29.546442+08:00"
+  },
+  {
+    "id": "ba66f693-e61c-45bd-b6ea-941deeb1b3a8",
+    "agent_id": "demo-agent",
+    "session_id": "c08d35ab-c50a-403e-b847-6412e72e976f",
+    "input": "现在几点？",
+    "status": "failed",
+    "error": "model call failed: ai gateway returned status 401: {\"error\":{\"code\":\"invalid_api_key\",\"message\":\"missing authorization header\",\"type\":\"authentication_error\"}}",
+    "created_at": "2026-09-14T13:49:29.503156+08:00",
+    "started_at": "2026-09-14T13:49:29.503194+08:00",
+    "ended_at": "2026-09-14T13:49:29.50919+08:00"
+  },
+  {
+    "id": "7f95f383-f09a-467d-8f38-2c63e4927765",
+    "agent_id": "demo-agent",
+    "session_id": "96046ccc-fe84-479b-a578-9473e9f370c9",
+    "input": "现在几点？",
+    "status": "completed",
+    "created_at": "2026-09-11T15:35:00.117596+08:00",
+    "started_at": "2026-09-11T15:35:00.117664+08:00",
+    "ended_at": "2026-09-11T15:35:10.391802+08:00"
   }
 ]

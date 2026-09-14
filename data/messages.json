@@ -1,4 +1,125 @@
 {
+  "04076a4c-df38-4b79-912c-9ef47fb4d6c9": [
+    {
+      "role": "user",
+      "content": "现在几点？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_gsi0a9aa",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-14T13:54:39+08:00",
+      "tool_call_id": "call_gsi0a9aa"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_j6pqi12s",
+          "name": "get_time",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-14T13:54:44+08:00",
+      "tool_call_id": "call_j6pqi12s"
+    },
+    {
+      "role": "assistant",
+      "content": "当前时间是2026年9月14日13点54分44秒（UTC+8）。"
+    },
+    {
+      "role": "user",
+      "content": "还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_6ollxqd0",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "8",
+      "tool_call_id": "call_6ollxqd0"
+    },
+    {
+      "role": "assistant",
+      "content": "当前货币余额为8元。"
+    },
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_l1jfyhww",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_79ykpitt",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-14T13:57:15+08:00",
+      "tool_call_id": "call_l1jfyhww"
+    },
+    {
+      "role": "tool",
+      "content": "3",
+      "tool_call_id": "call_79ykpitt"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_y096xcty",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_sydydy5j",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-14T13:57:31+08:00",
+      "tool_call_id": "call_y096xcty"
+    },
+    {
+      "role": "tool",
+      "content": "5",
+      "tool_call_id": "call_sydydy5j"
+    },
+    {
+      "role": "assistant",
+      "content": "当前时间是2026年9月14日13点57分31秒（UTC+8），货币余额为5元。"
+    }
+  ],
   "23d33e8c-8215-4ee7-a395-faf6f468b187": [
     {
       "role": "user",
@@ -70,6 +191,41 @@
       "content": "演示闭环完成：已通过 get_time 工具获取时间。"
     }
   ],
+  "7e1085f1-6e4d-491c-ac1e-cbd9404ff85d": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_bfy5ykon",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_yrc61bo7",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-14T14:01:01+08:00",
+      "tool_call_id": "call_bfy5ykon"
+    },
+    {
+      "role": "tool",
+      "content": "2",
+      "tool_call_id": "call_yrc61bo7"
+    },
+    {
+      "role": "assistant",
+      "content": "现在的时间是2026年9月14日14点01分，您的货币余额为2元。"
+    }
+  ],
   "96046ccc-fe84-479b-a578-9473e9f370c9": [
     {
       "role": "user",
@@ -111,6 +267,12 @@
     {
       "role": "assistant",
       "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    }
+  ],
+  "c08d35ab-c50a-403e-b847-6412e72e976f": [
+    {
+      "role": "user",
+      "content": "现在几点？"
     }
   ],
   "cc90dd6b-66dc-4146-b015-e14b0b48ee87": [

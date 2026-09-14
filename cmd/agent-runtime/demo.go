@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"math/rand"
+	"strconv"
 	"sync"
 	"time"
 
@@ -21,6 +23,22 @@ func (t *timeTool) InputSchema() []byte {
 
 func (t *timeTool) Execute(ctx context.Context, arguments []byte) (string, error) {
 	return time.Now().Format(time.RFC3339), nil
+}
+
+// Money 演示工具：获取当前货币余额。
+type MoneyTool struct{}
+
+func (t *MoneyTool) Name() string { return "get_money" }
+
+func (t *MoneyTool) Description() string { return "获取当前货币余额" }
+
+func (t *MoneyTool) InputSchema() []byte {
+	return []byte(`{"type":"object","properties":{},"additionalProperties":false}`)
+}
+
+func (t *MoneyTool) Execute(ctx context.Context, arguments []byte) (string, error) {
+	balance := rand.Intn(10) + 1
+	return strconv.Itoa(balance), nil
 }
 
 // demoModel 演示模型客户端：奇数轮发起工具调用，偶数轮给出最终回答，
