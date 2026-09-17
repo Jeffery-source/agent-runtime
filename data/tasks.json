@@ -11,37 +11,244 @@
     "ended_at": "2026-09-15T16:13:27.31803+08:00"
   },
   {
-    "id": "fc494e42-b44c-490e-9185-015b77388740",
+    "id": "e784d04b-1e40-4d0c-80dd-486eee15f6dc",
     "agent_id": "demo-agent",
-    "session_id": "e4e22fd9-49dd-4097-bb9b-6b4ff5d793e2",
+    "session_id": "2d5d8dee-d8d7-449b-b29d-f7a4bfa69e52",
     "input": "现在是几点？还有多少余额？",
     "status": "completed",
-    "output": "现在的时间是2026年9月15日 16:54，您的货币余额为3元。",
-    "created_at": "2026-09-15T16:54:34.038374+08:00",
-    "started_at": "2026-09-15T16:54:34.038424+08:00",
-    "ended_at": "2026-09-15T16:54:55.221436+08:00"
+    "output": "当前时间是17:00:42，您的账户余额为6元。",
+    "created_at": "2026-09-15T17:00:34.877393+08:00",
+    "started_at": "2026-09-15T17:00:34.877445+08:00",
+    "ended_at": "2026-09-15T17:00:48.375691+08:00"
   },
   {
-    "id": "f853711b-a2ca-4ecc-bf2a-be60b047a17e",
+    "id": "92976a89-a2e8-4544-84ea-eec40a39ac61",
     "agent_id": "demo-agent",
-    "session_id": "2c5419e7-7d90-4bc8-993d-628350cf72d9",
+    "session_id": "ae0d92d4-b6e7-4ed1-968c-ec6e3491f5b0",
     "input": "现在是几点？还有多少余额？",
     "status": "completed",
-    "output": "现在的时间是2026年9月15日 16:32，当前货币余额为8元。",
-    "created_at": "2026-09-15T16:32:39.999859+08:00",
-    "started_at": "2026-09-15T16:32:39.999918+08:00",
-    "ended_at": "2026-09-15T16:33:04.678739+08:00"
+    "output": "现在的时间是2026年9月17日 09:40，当前货币余额为2元。",
+    "created_at": "2026-09-17T09:40:22.302977+08:00",
+    "started_at": "2026-09-17T09:40:22.30303+08:00",
+    "ended_at": "2026-09-17T09:40:45.306268+08:00",
+    "execution": {
+      "steps": [
+        {
+          "id": "step_001",
+          "type": "input",
+          "iteration": 0,
+          "content": "现在是几点？还有多少余额？"
+        },
+        {
+          "id": "step_002",
+          "type": "decision",
+          "iteration": 1,
+          "reasoning": "好的，用户问现在几点了，还有多少余额。首先，我需要确定用户提到的“余额”是指什么，可能是账户余额、钱包余额或者其他类型的余额。不过根据提供的工具，有一个get_money函数可以获取货币余额，所以先调用这个函数。\n\n接下来，用户的问题需要两个部分的回答：当前时间和货币余额。我需要分别调用两个工具。首先调用get_time获取当前服务器时间，然后调用get_money获取余额。确保每个工具调用正确，参数是否正确，这里两个函数都不需要参数，所以直接调用。然后将结果整合成自然语言的回答，告诉用户当前时间和余额情况。注意时间的格式是否正确，余额的单位是否正确，比如元、美元等，但工具返回的可能是数值，所以直接显示数字，让用户自行判断单位。最后检查是否有遗漏或错误，确保回答清晰准确。\n"
+        },
+        {
+          "id": "step_003",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_u8tw7t3l",
+            "name": "get_time",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_004",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_u8tw7t3l",
+            "name": "get_time",
+            "arguments": "{}"
+          },
+          "result": "2026-09-17T09:40:35+08:00"
+        },
+        {
+          "id": "step_005",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_3nnvarmn",
+            "name": "get_money",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_006",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_3nnvarmn",
+            "name": "get_money",
+            "arguments": "{}"
+          },
+          "result": "2"
+        },
+        {
+          "id": "step_007",
+          "type": "decision",
+          "iteration": 2,
+          "reasoning": "好的，现在用户问的是“现在是几点？还有多少余额？”，我需要用提供的工具来获取信息。首先，用户的问题有两个部分：时间和余额。我需要分别调用对应的函数。\n\n先看第一个问题，获取当前时间。工具里有get_time函数，不需要参数，直接调用就行。调用后返回的时间是2026-09-17T09:40:35+08:00，这应该是北京时间，用户可能需要知道具体的时间点，所以直接告知当前时间是9点40分左右。\n\n然后是余额的问题，使用get_money函数，同样不需要参数。返回的结果是2，可能是指2元或者2个单位的货币。需要确认用户是否想知道具体的金额，但根据工具的描述，返回的是余额数值，所以直接告诉用户余额是2元即可。\n\n最后，把两个结果整合成自然的中文回答，确保信息准确且简洁。检查是否有其他需要考虑的地方，比如时间格式是否需要转换，但用户可能只需要知道当前时间点，所以直接展示返回的时间字符串即可。确认没有遗漏其他信息，然后组织语言回复用户。\n",
+          "content": "现在的时间是2026年9月17日 09:40，当前货币余额为2元。"
+        },
+        {
+          "id": "step_008",
+          "type": "finish",
+          "iteration": 2,
+          "content": "现在的时间是2026年9月17日 09:40，当前货币余额为2元。"
+        }
+      ]
+    }
   },
   {
-    "id": "a6fe6122-587c-4024-92ec-0a548c14f77f",
+    "id": "fffb1f6e-c05c-497a-89e5-f9e50bed993e",
     "agent_id": "demo-agent",
-    "session_id": "e226898e-7fc3-4e78-9b63-7cb771cc1c9c",
+    "session_id": "23d33e8c-8215-4ee7-a395-faf6f468b187",
+    "input": "现在几点？",
+    "status": "failed",
+    "error": "tool not found: tool not found",
+    "created_at": "2026-09-11T15:53:49.546512+08:00",
+    "started_at": "2026-09-11T15:53:49.54655+08:00",
+    "ended_at": "2026-09-11T15:53:58.742379+08:00"
+  },
+  {
+    "id": "10e62598-26c6-4d95-b521-2c76bf1a2f18",
+    "agent_id": "demo-agent",
+    "session_id": "1f428533-3fe1-4dec-a302-e1b49bea26c2",
     "input": "现在是几点？还有多少余额？",
     "status": "completed",
-    "output": "现在的时间是2026年9月16日08点23分45秒，当前货币余额为5元。",
-    "created_at": "2026-09-16T08:23:29.36052+08:00",
-    "started_at": "2026-09-16T08:23:29.360564+08:00",
-    "ended_at": "2026-09-16T08:23:56.715399+08:00"
+    "output": "当前时间是2026年9月15日16:57，您的账户余额为7元。需要帮您查询其他信息吗？",
+    "created_at": "2026-09-15T16:57:34.584795+08:00",
+    "started_at": "2026-09-15T16:57:34.584847+08:00",
+    "ended_at": "2026-09-15T16:57:50.868949+08:00"
+  },
+  {
+    "id": "b0142e41-0097-4766-b7ee-bcf6bf094cf2",
+    "agent_id": "demo-agent",
+    "session_id": "7e1085f1-6e4d-491c-ac1e-cbd9404ff85d",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在的时间是2026年9月14日14点01分，您的货币余额为2元。",
+    "created_at": "2026-09-14T14:00:55.244769+08:00",
+    "started_at": "2026-09-14T14:00:55.244803+08:00",
+    "ended_at": "2026-09-14T14:01:10.298396+08:00"
+  },
+  {
+    "id": "174d27b8-d3cf-41a8-b58b-4c13c48eab9c",
+    "agent_id": "demo-agent",
+    "session_id": "2a59ee7a-5266-4c70-97c9-92ecb5e846f8",
+    "input": "你好，请简单介绍一下你自己",
+    "status": "failed",
+    "error": "model call failed: ai gateway returned status 401: {\"error\":{\"code\":\"invalid_api_key\",\"message\":\"missing authorization header\",\"type\":\"authentication_error\"}}",
+    "created_at": "2026-09-11T14:02:21.889685+08:00",
+    "started_at": "2026-09-11T14:02:21.889742+08:00",
+    "ended_at": "2026-09-11T14:02:21.893323+08:00"
+  },
+  {
+    "id": "a4a4a7af-e6ba-49f6-9106-70679f41b19c",
+    "agent_id": "demo-agent",
+    "session_id": "e41d07c5-1cd2-435a-85c6-8c79ac69cc3c",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在的时间是09:46:58，当前余额为6元。需要帮您做些什么吗？",
+    "created_at": "2026-09-17T09:46:47.990474+08:00",
+    "started_at": "2026-09-17T09:46:47.990527+08:00",
+    "ended_at": "2026-09-17T09:47:10.346327+08:00",
+    "execution": {
+      "steps": [
+        {
+          "id": "step_001",
+          "type": "input",
+          "iteration": 0,
+          "content": "现在是几点？还有多少余额？"
+        },
+        {
+          "id": "step_002",
+          "type": "decision",
+          "iteration": 1,
+          "reasoning": "好的，用户问现在几点了，还有多少钱。我需要先调用获取时间的函数，然后调用获取余额的函数。先看看工具里有没有这两个函数。有的，get_time和get_money。那先调用get_time，不需要参数，直接执行。然后调用get_money，同样没有参数。等两个函数返回结果后，把时间和余额的信息告诉用户。注意时间可能需要格式化，比如显示小时和分钟，余额可能需要显示两位小数。确保回答清晰，符合用户需求。\n"
+        },
+        {
+          "id": "step_003",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_epujfrsv",
+            "name": "get_time",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_004",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_epujfrsv",
+            "name": "get_time",
+            "arguments": "{}"
+          },
+          "result": "2026-09-17T09:46:58+08:00"
+        },
+        {
+          "id": "step_005",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_4jgijz29",
+            "name": "get_money",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_006",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_4jgijz29",
+            "name": "get_money",
+            "arguments": "{}"
+          },
+          "result": "6"
+        },
+        {
+          "id": "step_007",
+          "type": "decision",
+          "iteration": 2,
+          "reasoning": "好的，现在用户问的是“现在是几点？还有多少余额？”，我需要先处理这两个问题。首先，用户想知道当前时间，所以我应该调用get_time函数来获取服务器时间。然后，用户还问到了余额，所以需要调用get_money函数来获取货币余额。\n\n先看第一个问题，获取时间。根据之前的工具响应，调用get_time返回的时间是2026-09-17T09:46:58+08:00，这个时间格式是ISO 8601标准，包含日期和时间，时区是UTC+8，也就是北京时间。用户可能只需要知道当前的具体时间，所以应该把时间部分提取出来，比如09:46:58，然后告知用户现在是几点几分。\n\n接下来是余额的问题，调用get_money函数返回的结果是6。这里需要确认货币的单位，比如是元、美元还是其他，但根据常见的场景，可能用户指的是人民币，所以应该回答还有6元余额。不过，如果工具返回的数值没有单位，可能需要进一步确认，但根据问题中的“余额”通常会有单位，所以直接给出数值和单位即可。\n\n然后，我需要将这两个结果整合成自然流畅的回答。首先回答时间，再回答余额。确保信息准确，格式清晰，不使用技术术语，让用户容易理解。同时，检查是否有遗漏或错误，比如时间格式是否正确，余额是否准确。最后，用友好的语气结束回答，保持简洁。\n",
+          "content": "现在的时间是09:46:58，当前余额为6元。需要帮您做些什么吗？"
+        },
+        {
+          "id": "step_008",
+          "type": "finish",
+          "iteration": 2,
+          "content": "现在的时间是09:46:58，当前余额为6元。需要帮您做些什么吗？"
+        }
+      ]
+    }
+  },
+  {
+    "id": "991f4adf-feb8-4e1b-bc17-72371ec1b564",
+    "agent_id": "demo-agent",
+    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
+    "input": "现在几点？",
+    "status": "completed",
+    "output": "当前时间是2026年9月14日13点54分44秒（UTC+8）。",
+    "created_at": "2026-09-14T13:54:29.946408+08:00",
+    "started_at": "2026-09-14T13:54:29.946454+08:00",
+    "ended_at": "2026-09-14T13:54:50.189447+08:00"
+  },
+  {
+    "id": "dc079d63-f972-4658-8db7-96ed525c920f",
+    "agent_id": "demo-agent",
+    "session_id": "a6aeba8a-7888-4a69-9ae8-1499c9150af6",
+    "input": "现在几点？",
+    "status": "completed",
+    "created_at": "2026-09-11T15:26:02.766071+08:00",
+    "started_at": "2026-09-11T15:26:02.766126+08:00",
+    "ended_at": "2026-09-11T15:26:12.285337+08:00"
   },
   {
     "id": "3d534f63-e3d2-4ef2-8771-ff6a26040a86",
@@ -122,6 +329,317 @@
         }
       ]
     }
+  },
+  {
+    "id": "7f95f383-f09a-467d-8f38-2c63e4927765",
+    "agent_id": "demo-agent",
+    "session_id": "96046ccc-fe84-479b-a578-9473e9f370c9",
+    "input": "现在几点？",
+    "status": "completed",
+    "created_at": "2026-09-11T15:35:00.117596+08:00",
+    "started_at": "2026-09-11T15:35:00.117664+08:00",
+    "ended_at": "2026-09-11T15:35:10.391802+08:00"
+  },
+  {
+    "id": "428ed844-b8e3-4e47-8e42-36f9ed7ce929",
+    "agent_id": "demo-agent",
+    "session_id": "70178e34-a480-4c8e-a235-b46de16ffbf8",
+    "input": "现在是几点？还有多少余额？",
+    "status": "failed",
+    "error": "session not found: session not found",
+    "created_at": "2026-09-17T10:29:40.787511+08:00",
+    "started_at": "2026-09-17T10:29:40.787531+08:00",
+    "ended_at": "2026-09-17T10:29:40.787558+08:00"
+  },
+  {
+    "id": "d2241e26-5a81-420b-8872-4db91c79da3a",
+    "agent_id": "demo-agent",
+    "session_id": "6b55bfcd-c6b3-4a59-b89f-dcafead61376",
+    "input": "现在几点了",
+    "status": "completed",
+    "output": "演示闭环完成：已通过 get_time 工具获取时间。",
+    "created_at": "2026-09-01T17:25:14.907295+08:00",
+    "started_at": "2026-09-01T17:25:14.907311+08:00",
+    "ended_at": "2026-09-01T17:25:14.907687+08:00"
+  },
+  {
+    "id": "2c781d46-7fd4-43f6-81cf-7fd84ca09b12",
+    "agent_id": "demo-agent",
+    "session_id": "2d6a7679-4a62-447b-bd55-d8b1da054b73",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在的时间是2026年9月17日16点52分31秒，账户余额还有5元。",
+    "created_at": "2026-09-17T16:52:21.447537+08:00",
+    "started_at": "2026-09-17T16:52:21.447563+08:00",
+    "ended_at": "2026-09-17T16:52:40.601923+08:00",
+    "execution": {
+      "steps": [
+        {
+          "id": "step_001",
+          "type": "input",
+          "iteration": 0,
+          "content": "现在是几点？还有多少余额？"
+        },
+        {
+          "id": "step_002",
+          "type": "decision",
+          "iteration": 1,
+          "decision": "call_tools",
+          "summary": "调用多个工具查询：get_time、get_money",
+          "reasoning": "好的，用户问现在几点了，还有多少余额。我需要先调用获取时间的函数，然后调用获取货币余额的函数。先看工具里有没有这两个函数。工具里有get_time和get_money，分别获取服务器时间和货币余额。所以，我应该先调用get_time，再调用get_money，然后把结果告诉用户。确保每个步骤都正确，没有遗漏参数或者错误的调用。现在开始生成对应的工具调用。\n"
+        },
+        {
+          "id": "step_003",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_7hi3uvu1",
+            "name": "get_time",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_004",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_7hi3uvu1",
+            "name": "get_time",
+            "arguments": "{}"
+          },
+          "result": "2026-09-17T16:52:31+08:00"
+        },
+        {
+          "id": "step_005",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_0f03kgu8",
+            "name": "get_money",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_006",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_0f03kgu8",
+            "name": "get_money",
+            "arguments": "{}"
+          },
+          "result": "5"
+        },
+        {
+          "id": "step_007",
+          "type": "finish",
+          "iteration": 2,
+          "content": "现在的时间是2026年9月17日16点52分31秒，账户余额还有5元。"
+        }
+      ]
+    }
+  },
+  {
+    "id": "1ad42a64-5073-49e6-9c1b-6fc9a10add92",
+    "agent_id": "demo-agent",
+    "session_id": "db59d5c1-2139-49de-b07b-80788b63d9fa",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "当前时间是：2026年9月17日 10:37:49  \n账户余额为：9元  \n\n需要为您做其他提醒或查询吗？",
+    "created_at": "2026-09-17T10:37:33.924929+08:00",
+    "started_at": "2026-09-17T10:37:33.924996+08:00",
+    "ended_at": "2026-09-17T10:37:59.606997+08:00",
+    "execution": {
+      "steps": [
+        {
+          "id": "step_001",
+          "type": "input",
+          "iteration": 0,
+          "content": "现在是几点？还有多少余额？"
+        },
+        {
+          "id": "step_002",
+          "type": "decision",
+          "iteration": 1,
+          "decision": "call_tools",
+          "reasoning": "好的，用户问现在几点了，还有多少余额。首先，我需要确定用户的问题涉及两个部分：时间和货币余额。根据提供的工具，我有get_time和get_money这两个函数可以使用。\n\n首先处理时间问题。用户想知道当前的时间，所以应该调用get_time函数。这个函数不需要任何参数，直接调用即可。接下来是货币余额的问题，用户可能想知道账户里的剩余金额，所以需要调用get_money函数，同样不需要参数。这两个函数都可以同步调用，因为它们都不依赖于其他异步操作。\n\n接下来，我需要确保正确生成工具调用的JSON结构。对于get_time，名称是\"get_time\"，参数是空对象。对于get_money，名称是\"get_money\"，参数也是空对象。需要将这两个工具调用分别放在XML标签中，每个调用占一行，确保格式正确。\n\n然后，检查是否有可能的错误。例如，是否有参数缺失或者函数名拼写错误。这里两个函数名都正确，且参数正确，所以没问题。最后，确认工具调用的顺序是否影响结果，但这里两个调用是独立的，顺序不影响，所以可以同时发出。\n\n总结下来，用户的问题需要两个工具调用，分别获取时间和余额，然后将结果整合回复用户。\n"
+        },
+        {
+          "id": "step_003",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_hfu5jpdq",
+            "name": "get_time",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_004",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_hfu5jpdq",
+            "name": "get_time",
+            "arguments": "{}"
+          },
+          "result": "2026-09-17T10:37:49+08:00"
+        },
+        {
+          "id": "step_005",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_vmak4w3t",
+            "name": "get_money",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_006",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_vmak4w3t",
+            "name": "get_money",
+            "arguments": "{}"
+          },
+          "result": "9"
+        },
+        {
+          "id": "step_007",
+          "type": "decision",
+          "iteration": 2,
+          "decision": "finish"
+        },
+        {
+          "id": "step_008",
+          "type": "finish",
+          "iteration": 2,
+          "content": "当前时间是：2026年9月17日 10:37:49  \n账户余额为：9元  \n\n需要为您做其他提醒或查询吗？"
+        }
+      ]
+    }
+  },
+  {
+    "id": "b6a5cf14-7296-4e60-90dd-faadb1a7a80c",
+    "agent_id": "demo-agent",
+    "session_id": "cc90dd6b-66dc-4146-b015-e14b0b48ee87",
+    "input": "你好，请简单介绍一下你自己",
+    "status": "completed",
+    "output": "你好！我是通义千问，由通义实验室开发的超大规模语言模型。我能够帮助你回答问题、创作文字、逻辑推理、编程等，并且支持多种语言，包括中文、英文、日文、韩文等。我的目标是成为你日常生活和工作中的智能助手，无论你需要讨论有趣的话题、解决复杂问题，还是单纯想聊天，我都会尽力提供帮助。有什么问题或需要协助的吗？😊",
+    "created_at": "2026-09-11T14:10:12.728096+08:00",
+    "started_at": "2026-09-11T14:10:12.728119+08:00",
+    "ended_at": "2026-09-11T14:10:26.448806+08:00"
+  },
+  {
+    "id": "b761a35c-5b32-4785-a37c-edb2475109df",
+    "agent_id": "demo-agent",
+    "session_id": "f51f36cf-0fba-428c-b7c5-c1a75ba881f2",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "当前时间是2026年9月17日 上午10点42分，账户余额为4元。",
+    "created_at": "2026-09-17T10:41:48.993294+08:00",
+    "started_at": "2026-09-17T10:41:48.993325+08:00",
+    "ended_at": "2026-09-17T10:42:08.522487+08:00",
+    "execution": {
+      "steps": [
+        {
+          "id": "step_001",
+          "type": "input",
+          "iteration": 0,
+          "content": "现在是几点？还有多少余额？"
+        },
+        {
+          "id": "step_002",
+          "type": "decision",
+          "iteration": 1,
+          "decision": "call_tools",
+          "reasoning": "好的，用户问现在几点了，还有多少余额。我需要先确定要调用哪些工具。根据提供的工具列表，有两个函数：get_time和get_money。get_time用于获取当前服务器时间，而get_money用于获取货币余额。用户的问题正好需要这两个信息，所以我要分别调用这两个函数。\n\n首先处理时间问题。用户想知道现在的时间，所以应该调用get_time函数。这个函数不需要任何参数，直接调用即可。接下来是余额的问题，用户询问的是货币余额，所以需要调用get_money函数，同样不需要参数。这两个函数调用都是同步的，应该先执行，然后等待结果返回，最后把结果整合成自然语言的回答给用户。\n\n需要确保调用的顺序是否会影响结果，但看起来这两个函数是独立的，没有依赖关系，所以可以同时调用。不过根据工具调用的格式，可能需要分开两次工具调用，或者可以一次性调用两个。不过根据示例，每个工具调用应该单独列出。因此，我需要生成两个tool_call块，分别对应get_time和get_money。然后，当收到两个结果后，将时间信息和余额信息合并成一个回答。例如，“现在的时间是X，余额是Y。”这样用户的问题就能得到完整的解答了。\n"
+        },
+        {
+          "id": "step_003",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_7bppwjn0",
+            "name": "get_time",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_004",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_7bppwjn0",
+            "name": "get_time",
+            "arguments": "{}"
+          },
+          "result": "2026-09-17T10:42:01+08:00"
+        },
+        {
+          "id": "step_005",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_qlfd0sjh",
+            "name": "get_money",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_006",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_qlfd0sjh",
+            "name": "get_money",
+            "arguments": "{}"
+          },
+          "result": "4"
+        },
+        {
+          "id": "step_007",
+          "type": "finish",
+          "iteration": 2,
+          "content": "当前时间是2026年9月17日 上午10点42分，账户余额为4元。"
+        }
+      ]
+    }
+  },
+  {
+    "id": "f853711b-a2ca-4ecc-bf2a-be60b047a17e",
+    "agent_id": "demo-agent",
+    "session_id": "2c5419e7-7d90-4bc8-993d-628350cf72d9",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在的时间是2026年9月15日 16:32，当前货币余额为8元。",
+    "created_at": "2026-09-15T16:32:39.999859+08:00",
+    "started_at": "2026-09-15T16:32:39.999918+08:00",
+    "ended_at": "2026-09-15T16:33:04.678739+08:00"
+  },
+  {
+    "id": "ba66f693-e61c-45bd-b6ea-941deeb1b3a8",
+    "agent_id": "demo-agent",
+    "session_id": "c08d35ab-c50a-403e-b847-6412e72e976f",
+    "input": "现在几点？",
+    "status": "failed",
+    "error": "model call failed: ai gateway returned status 401: {\"error\":{\"code\":\"invalid_api_key\",\"message\":\"missing authorization header\",\"type\":\"authentication_error\"}}",
+    "created_at": "2026-09-14T13:49:29.503156+08:00",
+    "started_at": "2026-09-14T13:49:29.503194+08:00",
+    "ended_at": "2026-09-14T13:49:29.50919+08:00"
+  },
+  {
+    "id": "f2bde41a-1a5e-4798-bf1f-2c322bc3ae01",
+    "agent_id": "demo-agent",
+    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "当前时间是2026年9月14日13点57分31秒（UTC+8），货币余额为5元。",
+    "created_at": "2026-09-14T13:57:04.479946+08:00",
+    "started_at": "2026-09-14T13:57:04.479958+08:00",
+    "ended_at": "2026-09-14T13:57:43.956642+08:00"
   },
   {
     "id": "55da11e9-8583-46d1-82d3-cb7bbb4e1e01",
@@ -212,359 +730,6 @@
     }
   },
   {
-    "id": "92976a89-a2e8-4544-84ea-eec40a39ac61",
-    "agent_id": "demo-agent",
-    "session_id": "ae0d92d4-b6e7-4ed1-968c-ec6e3491f5b0",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "现在的时间是2026年9月17日 09:40，当前货币余额为2元。",
-    "created_at": "2026-09-17T09:40:22.302977+08:00",
-    "started_at": "2026-09-17T09:40:22.30303+08:00",
-    "ended_at": "2026-09-17T09:40:45.306268+08:00",
-    "execution": {
-      "steps": [
-        {
-          "id": "step_001",
-          "type": "input",
-          "iteration": 0,
-          "content": "现在是几点？还有多少余额？"
-        },
-        {
-          "id": "step_002",
-          "type": "decision",
-          "iteration": 1,
-          "reasoning": "好的，用户问现在几点了，还有多少余额。首先，我需要确定用户提到的“余额”是指什么，可能是账户余额、钱包余额或者其他类型的余额。不过根据提供的工具，有一个get_money函数可以获取货币余额，所以先调用这个函数。\n\n接下来，用户的问题需要两个部分的回答：当前时间和货币余额。我需要分别调用两个工具。首先调用get_time获取当前服务器时间，然后调用get_money获取余额。确保每个工具调用正确，参数是否正确，这里两个函数都不需要参数，所以直接调用。然后将结果整合成自然语言的回答，告诉用户当前时间和余额情况。注意时间的格式是否正确，余额的单位是否正确，比如元、美元等，但工具返回的可能是数值，所以直接显示数字，让用户自行判断单位。最后检查是否有遗漏或错误，确保回答清晰准确。\n"
-        },
-        {
-          "id": "step_003",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_u8tw7t3l",
-            "name": "get_time",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_004",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_u8tw7t3l",
-            "name": "get_time",
-            "arguments": "{}"
-          },
-          "result": "2026-09-17T09:40:35+08:00"
-        },
-        {
-          "id": "step_005",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_3nnvarmn",
-            "name": "get_money",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_006",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_3nnvarmn",
-            "name": "get_money",
-            "arguments": "{}"
-          },
-          "result": "2"
-        },
-        {
-          "id": "step_007",
-          "type": "decision",
-          "iteration": 2,
-          "reasoning": "好的，现在用户问的是“现在是几点？还有多少余额？”，我需要用提供的工具来获取信息。首先，用户的问题有两个部分：时间和余额。我需要分别调用对应的函数。\n\n先看第一个问题，获取当前时间。工具里有get_time函数，不需要参数，直接调用就行。调用后返回的时间是2026-09-17T09:40:35+08:00，这应该是北京时间，用户可能需要知道具体的时间点，所以直接告知当前时间是9点40分左右。\n\n然后是余额的问题，使用get_money函数，同样不需要参数。返回的结果是2，可能是指2元或者2个单位的货币。需要确认用户是否想知道具体的金额，但根据工具的描述，返回的是余额数值，所以直接告诉用户余额是2元即可。\n\n最后，把两个结果整合成自然的中文回答，确保信息准确且简洁。检查是否有其他需要考虑的地方，比如时间格式是否需要转换，但用户可能只需要知道当前时间点，所以直接展示返回的时间字符串即可。确认没有遗漏其他信息，然后组织语言回复用户。\n",
-          "content": "现在的时间是2026年9月17日 09:40，当前货币余额为2元。"
-        },
-        {
-          "id": "step_008",
-          "type": "finish",
-          "iteration": 2,
-          "content": "现在的时间是2026年9月17日 09:40，当前货币余额为2元。"
-        }
-      ]
-    }
-  },
-  {
-    "id": "7f95f383-f09a-467d-8f38-2c63e4927765",
-    "agent_id": "demo-agent",
-    "session_id": "96046ccc-fe84-479b-a578-9473e9f370c9",
-    "input": "现在几点？",
-    "status": "completed",
-    "created_at": "2026-09-11T15:35:00.117596+08:00",
-    "started_at": "2026-09-11T15:35:00.117664+08:00",
-    "ended_at": "2026-09-11T15:35:10.391802+08:00"
-  },
-  {
-    "id": "e784d04b-1e40-4d0c-80dd-486eee15f6dc",
-    "agent_id": "demo-agent",
-    "session_id": "2d5d8dee-d8d7-449b-b29d-f7a4bfa69e52",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "当前时间是17:00:42，您的账户余额为6元。",
-    "created_at": "2026-09-15T17:00:34.877393+08:00",
-    "started_at": "2026-09-15T17:00:34.877445+08:00",
-    "ended_at": "2026-09-15T17:00:48.375691+08:00"
-  },
-  {
-    "id": "fffb1f6e-c05c-497a-89e5-f9e50bed993e",
-    "agent_id": "demo-agent",
-    "session_id": "23d33e8c-8215-4ee7-a395-faf6f468b187",
-    "input": "现在几点？",
-    "status": "failed",
-    "error": "tool not found: tool not found",
-    "created_at": "2026-09-11T15:53:49.546512+08:00",
-    "started_at": "2026-09-11T15:53:49.54655+08:00",
-    "ended_at": "2026-09-11T15:53:58.742379+08:00"
-  },
-  {
-    "id": "10e62598-26c6-4d95-b521-2c76bf1a2f18",
-    "agent_id": "demo-agent",
-    "session_id": "1f428533-3fe1-4dec-a302-e1b49bea26c2",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "当前时间是2026年9月15日16:57，您的账户余额为7元。需要帮您查询其他信息吗？",
-    "created_at": "2026-09-15T16:57:34.584795+08:00",
-    "started_at": "2026-09-15T16:57:34.584847+08:00",
-    "ended_at": "2026-09-15T16:57:50.868949+08:00"
-  },
-  {
-    "id": "1ad42a64-5073-49e6-9c1b-6fc9a10add92",
-    "agent_id": "demo-agent",
-    "session_id": "db59d5c1-2139-49de-b07b-80788b63d9fa",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "当前时间是：2026年9月17日 10:37:49  \n账户余额为：9元  \n\n需要为您做其他提醒或查询吗？",
-    "created_at": "2026-09-17T10:37:33.924929+08:00",
-    "started_at": "2026-09-17T10:37:33.924996+08:00",
-    "ended_at": "2026-09-17T10:37:59.606997+08:00",
-    "execution": {
-      "steps": [
-        {
-          "id": "step_001",
-          "type": "input",
-          "iteration": 0,
-          "content": "现在是几点？还有多少余额？"
-        },
-        {
-          "id": "step_002",
-          "type": "decision",
-          "iteration": 1,
-          "decision": "call_tools",
-          "reasoning": "好的，用户问现在几点了，还有多少余额。首先，我需要确定用户的问题涉及两个部分：时间和货币余额。根据提供的工具，我有get_time和get_money这两个函数可以使用。\n\n首先处理时间问题。用户想知道当前的时间，所以应该调用get_time函数。这个函数不需要任何参数，直接调用即可。接下来是货币余额的问题，用户可能想知道账户里的剩余金额，所以需要调用get_money函数，同样不需要参数。这两个函数都可以同步调用，因为它们都不依赖于其他异步操作。\n\n接下来，我需要确保正确生成工具调用的JSON结构。对于get_time，名称是\"get_time\"，参数是空对象。对于get_money，名称是\"get_money\"，参数也是空对象。需要将这两个工具调用分别放在XML标签中，每个调用占一行，确保格式正确。\n\n然后，检查是否有可能的错误。例如，是否有参数缺失或者函数名拼写错误。这里两个函数名都正确，且参数正确，所以没问题。最后，确认工具调用的顺序是否影响结果，但这里两个调用是独立的，顺序不影响，所以可以同时发出。\n\n总结下来，用户的问题需要两个工具调用，分别获取时间和余额，然后将结果整合回复用户。\n"
-        },
-        {
-          "id": "step_003",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_hfu5jpdq",
-            "name": "get_time",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_004",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_hfu5jpdq",
-            "name": "get_time",
-            "arguments": "{}"
-          },
-          "result": "2026-09-17T10:37:49+08:00"
-        },
-        {
-          "id": "step_005",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_vmak4w3t",
-            "name": "get_money",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_006",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_vmak4w3t",
-            "name": "get_money",
-            "arguments": "{}"
-          },
-          "result": "9"
-        },
-        {
-          "id": "step_007",
-          "type": "decision",
-          "iteration": 2,
-          "decision": "finish"
-        },
-        {
-          "id": "step_008",
-          "type": "finish",
-          "iteration": 2,
-          "content": "当前时间是：2026年9月17日 10:37:49  \n账户余额为：9元  \n\n需要为您做其他提醒或查询吗？"
-        }
-      ]
-    }
-  },
-  {
-    "id": "ba66f693-e61c-45bd-b6ea-941deeb1b3a8",
-    "agent_id": "demo-agent",
-    "session_id": "c08d35ab-c50a-403e-b847-6412e72e976f",
-    "input": "现在几点？",
-    "status": "failed",
-    "error": "model call failed: ai gateway returned status 401: {\"error\":{\"code\":\"invalid_api_key\",\"message\":\"missing authorization header\",\"type\":\"authentication_error\"}}",
-    "created_at": "2026-09-14T13:49:29.503156+08:00",
-    "started_at": "2026-09-14T13:49:29.503194+08:00",
-    "ended_at": "2026-09-14T13:49:29.50919+08:00"
-  },
-  {
-    "id": "67607be8-a424-4ec8-988c-f4ba702fd793",
-    "agent_id": "demo-agent",
-    "session_id": "70178e34-a480-4c8e-a235-b46de16ffbf8",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "现在的时间是2026年9月17日 10点01分，账户余额为5元。",
-    "created_at": "2026-09-17T10:00:58.878321+08:00",
-    "started_at": "2026-09-17T10:00:58.878348+08:00",
-    "ended_at": "2026-09-17T10:01:24.199422+08:00",
-    "execution": {
-      "steps": [
-        {
-          "id": "step_001",
-          "type": "input",
-          "iteration": 0,
-          "content": "现在是几点？还有多少余额？"
-        },
-        {
-          "id": "step_002",
-          "type": "decision",
-          "iteration": 1,
-          "reasoning": "好的，用户问现在几点了，还有多少余额。首先，我需要确定用户需要的是服务器时间还是其他时间，但根据提供的工具，只有get_time可以获取当前服务器时间，所以应该调用这个函数。然后，用户还问了余额，工具里有get_money函数，可以获取货币余额。所以，我需要分别调用这两个函数，获取时间 and 余额的信息。然后，将结果整理成自然语言回复用户。注意，每个工具调用要放在独立的tool_call标签里，不能同时调用多个。先处理时间，再处理余额，确保顺序正确。最后，用中文回答，保持口语化，不使用专业术语。\n"
-        },
-        {
-          "id": "step_003",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_mpl1049p",
-            "name": "get_time",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_004",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_mpl1049p",
-            "name": "get_time",
-            "arguments": "{}"
-          },
-          "result": "2026-09-17T10:01:10+08:00"
-        },
-        {
-          "id": "step_005",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_rc6oyfez",
-            "name": "get_money",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_006",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_rc6oyfez",
-            "name": "get_money",
-            "arguments": "{}"
-          },
-          "result": "5"
-        },
-        {
-          "id": "step_007",
-          "type": "decision",
-          "iteration": 2,
-          "reasoning": "好的，用户之前问了现在几点和余额有多少，我需要先调用相应的工具来获取这些信息。首先，用户的问题涉及两个部分：当前时间和货币余额。根据之前的工具列表，有两个函数可以使用，分别是get_time和get_money。\n\n首先处理时间部分。用户可能想知道精确的当前时间，所以需要调用get_time函数。这个函数不需要参数，直接返回服务器的时间。然后，用户可能是在管理自己的账户或者进行需要时间戳的操作，比如记录时间或者安排任务，所以准确的时间很重要。\n\n接下来是余额查询。用户询问余额，可能是想确认自己的资金状况，或者在进行交易前检查是否有足够余额。这时候需要调用get_money函数，同样不需要参数，直接获取当前的余额数值。用户可能希望得到一个明确的数字，所以需要确保返回的结果是准确的。\n\n在获取到工具返回的结果后，需要将结果以自然的方式整合到回答中。例如，时间可能返回一个ISO格式的字符串，需要转换成更易读的形式，比如“2026年9月17日 10点01分”。而余额可能直接返回一个数字，需要确认单位是否是元，并且是否需要显示小数点后的零，比如5元是否显示为5.00元。\n\n另外，要注意用户可能的潜在需求。比如，如果余额是5，用户可能想知道是否足够进行某项操作，或者是否有其他费用需要考虑。但根据当前问题，用户只是询问当前余额，所以直接回答即可，无需额外推测。\n\n最后，确保回答清晰、简洁，并且信息准确。将时间和余额分别列出，让用户一目了然。同时，保持语气友好，符合助手的角色。\n"
-        },
-        {
-          "id": "step_008",
-          "type": "finish",
-          "iteration": 2,
-          "content": "现在的时间是2026年9月17日 10点01分，账户余额为5元。"
-        }
-      ]
-    }
-  },
-  {
-    "id": "1bb378b8-0fc3-46eb-9f1e-b75892165a42",
-    "agent_id": "demo-agent",
-    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
-    "input": "还有多少余额？",
-    "status": "completed",
-    "output": "当前货币余额为8元。",
-    "created_at": "2026-09-14T13:56:10.28855+08:00",
-    "started_at": "2026-09-14T13:56:10.288578+08:00",
-    "ended_at": "2026-09-14T13:56:25.336217+08:00"
-  },
-  {
-    "id": "3dce8f10-ec83-4461-9e6e-c7b5bbae0fc9",
-    "agent_id": "demo-agent",
-    "session_id": "dd3bdfcf-4152-415c-99d2-c89f85c78b2e",
-    "input": "我想知道现在的时间",
-    "status": "completed",
-    "created_at": "2026-09-11T15:20:14.533822+08:00",
-    "started_at": "2026-09-11T15:20:14.533865+08:00",
-    "ended_at": "2026-09-11T15:20:23.206057+08:00"
-  },
-  {
-    "id": "b0142e41-0097-4766-b7ee-bcf6bf094cf2",
-    "agent_id": "demo-agent",
-    "session_id": "7e1085f1-6e4d-491c-ac1e-cbd9404ff85d",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "现在的时间是2026年9月14日14点01分，您的货币余额为2元。",
-    "created_at": "2026-09-14T14:00:55.244769+08:00",
-    "started_at": "2026-09-14T14:00:55.244803+08:00",
-    "ended_at": "2026-09-14T14:01:10.298396+08:00"
-  },
-  {
-    "id": "174d27b8-d3cf-41a8-b58b-4c13c48eab9c",
-    "agent_id": "demo-agent",
-    "session_id": "2a59ee7a-5266-4c70-97c9-92ecb5e846f8",
-    "input": "你好，请简单介绍一下你自己",
-    "status": "failed",
-    "error": "model call failed: ai gateway returned status 401: {\"error\":{\"code\":\"invalid_api_key\",\"message\":\"missing authorization header\",\"type\":\"authentication_error\"}}",
-    "created_at": "2026-09-11T14:02:21.889685+08:00",
-    "started_at": "2026-09-11T14:02:21.889742+08:00",
-    "ended_at": "2026-09-11T14:02:21.893323+08:00"
-  },
-  {
-    "id": "b6a5cf14-7296-4e60-90dd-faadb1a7a80c",
-    "agent_id": "demo-agent",
-    "session_id": "cc90dd6b-66dc-4146-b015-e14b0b48ee87",
-    "input": "你好，请简单介绍一下你自己",
-    "status": "completed",
-    "output": "你好！我是通义千问，由通义实验室开发的超大规模语言模型。我能够帮助你回答问题、创作文字、逻辑推理、编程等，并且支持多种语言，包括中文、英文、日文、韩文等。我的目标是成为你日常生活和工作中的智能助手，无论你需要讨论有趣的话题、解决复杂问题，还是单纯想聊天，我都会尽力提供帮助。有什么问题或需要协助的吗？😊",
-    "created_at": "2026-09-11T14:10:12.728096+08:00",
-    "started_at": "2026-09-11T14:10:12.728119+08:00",
-    "ended_at": "2026-09-11T14:10:26.448806+08:00"
-  },
-  {
     "id": "9b50491d-06a9-48b5-9de9-0f2b0a63ce93",
     "agent_id": "demo-agent",
     "session_id": "298b28f6-fe35-4aca-866f-06f33c6810d9",
@@ -576,186 +741,6 @@
     "ended_at": "2026-09-11T16:01:29.546442+08:00"
   },
   {
-    "id": "a4a4a7af-e6ba-49f6-9106-70679f41b19c",
-    "agent_id": "demo-agent",
-    "session_id": "e41d07c5-1cd2-435a-85c6-8c79ac69cc3c",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "现在的时间是09:46:58，当前余额为6元。需要帮您做些什么吗？",
-    "created_at": "2026-09-17T09:46:47.990474+08:00",
-    "started_at": "2026-09-17T09:46:47.990527+08:00",
-    "ended_at": "2026-09-17T09:47:10.346327+08:00",
-    "execution": {
-      "steps": [
-        {
-          "id": "step_001",
-          "type": "input",
-          "iteration": 0,
-          "content": "现在是几点？还有多少余额？"
-        },
-        {
-          "id": "step_002",
-          "type": "decision",
-          "iteration": 1,
-          "reasoning": "好的，用户问现在几点了，还有多少钱。我需要先调用获取时间的函数，然后调用获取余额的函数。先看看工具里有没有这两个函数。有的，get_time和get_money。那先调用get_time，不需要参数，直接执行。然后调用get_money，同样没有参数。等两个函数返回结果后，把时间和余额的信息告诉用户。注意时间可能需要格式化，比如显示小时和分钟，余额可能需要显示两位小数。确保回答清晰，符合用户需求。\n"
-        },
-        {
-          "id": "step_003",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_epujfrsv",
-            "name": "get_time",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_004",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_epujfrsv",
-            "name": "get_time",
-            "arguments": "{}"
-          },
-          "result": "2026-09-17T09:46:58+08:00"
-        },
-        {
-          "id": "step_005",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_4jgijz29",
-            "name": "get_money",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_006",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_4jgijz29",
-            "name": "get_money",
-            "arguments": "{}"
-          },
-          "result": "6"
-        },
-        {
-          "id": "step_007",
-          "type": "decision",
-          "iteration": 2,
-          "reasoning": "好的，现在用户问的是“现在是几点？还有多少余额？”，我需要先处理这两个问题。首先，用户想知道当前时间，所以我应该调用get_time函数来获取服务器时间。然后，用户还问到了余额，所以需要调用get_money函数来获取货币余额。\n\n先看第一个问题，获取时间。根据之前的工具响应，调用get_time返回的时间是2026-09-17T09:46:58+08:00，这个时间格式是ISO 8601标准，包含日期和时间，时区是UTC+8，也就是北京时间。用户可能只需要知道当前的具体时间，所以应该把时间部分提取出来，比如09:46:58，然后告知用户现在是几点几分。\n\n接下来是余额的问题，调用get_money函数返回的结果是6。这里需要确认货币的单位，比如是元、美元还是其他，但根据常见的场景，可能用户指的是人民币，所以应该回答还有6元余额。不过，如果工具返回的数值没有单位，可能需要进一步确认，但根据问题中的“余额”通常会有单位，所以直接给出数值和单位即可。\n\n然后，我需要将这两个结果整合成自然流畅的回答。首先回答时间，再回答余额。确保信息准确，格式清晰，不使用技术术语，让用户容易理解。同时，检查是否有遗漏或错误，比如时间格式是否正确，余额是否准确。最后，用友好的语气结束回答，保持简洁。\n",
-          "content": "现在的时间是09:46:58，当前余额为6元。需要帮您做些什么吗？"
-        },
-        {
-          "id": "step_008",
-          "type": "finish",
-          "iteration": 2,
-          "content": "现在的时间是09:46:58，当前余额为6元。需要帮您做些什么吗？"
-        }
-      ]
-    }
-  },
-  {
-    "id": "428ed844-b8e3-4e47-8e42-36f9ed7ce929",
-    "agent_id": "demo-agent",
-    "session_id": "70178e34-a480-4c8e-a235-b46de16ffbf8",
-    "input": "现在是几点？还有多少余额？",
-    "status": "failed",
-    "error": "session not found: session not found",
-    "created_at": "2026-09-17T10:29:40.787511+08:00",
-    "started_at": "2026-09-17T10:29:40.787531+08:00",
-    "ended_at": "2026-09-17T10:29:40.787558+08:00"
-  },
-  {
-    "id": "a7a4aeec-7111-43bf-8300-5b33c40999b7",
-    "agent_id": "demo-agent",
-    "session_id": "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed",
-    "input": "现在几点了",
-    "status": "completed",
-    "output": "演示闭环完成：已通过 get_time 工具获取时间。",
-    "created_at": "2026-09-02T14:30:07.23113+08:00",
-    "started_at": "2026-09-02T14:30:07.231166+08:00",
-    "ended_at": "2026-09-02T14:30:07.231904+08:00"
-  },
-  {
-    "id": "b761a35c-5b32-4785-a37c-edb2475109df",
-    "agent_id": "demo-agent",
-    "session_id": "f51f36cf-0fba-428c-b7c5-c1a75ba881f2",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "当前时间是2026年9月17日 上午10点42分，账户余额为4元。",
-    "created_at": "2026-09-17T10:41:48.993294+08:00",
-    "started_at": "2026-09-17T10:41:48.993325+08:00",
-    "ended_at": "2026-09-17T10:42:08.522487+08:00",
-    "execution": {
-      "steps": [
-        {
-          "id": "step_001",
-          "type": "input",
-          "iteration": 0,
-          "content": "现在是几点？还有多少余额？"
-        },
-        {
-          "id": "step_002",
-          "type": "decision",
-          "iteration": 1,
-          "decision": "call_tools",
-          "reasoning": "好的，用户问现在几点了，还有多少余额。我需要先确定要调用哪些工具。根据提供的工具列表，有两个函数：get_time和get_money。get_time用于获取当前服务器时间，而get_money用于获取货币余额。用户的问题正好需要这两个信息，所以我要分别调用这两个函数。\n\n首先处理时间问题。用户想知道现在的时间，所以应该调用get_time函数。这个函数不需要任何参数，直接调用即可。接下来是余额的问题，用户询问的是货币余额，所以需要调用get_money函数，同样不需要参数。这两个函数调用都是同步的，应该先执行，然后等待结果返回，最后把结果整合成自然语言的回答给用户。\n\n需要确保调用的顺序是否会影响结果，但看起来这两个函数是独立的，没有依赖关系，所以可以同时调用。不过根据工具调用的格式，可能需要分开两次工具调用，或者可以一次性调用两个。不过根据示例，每个工具调用应该单独列出。因此，我需要生成两个tool_call块，分别对应get_time和get_money。然后，当收到两个结果后，将时间信息和余额信息合并成一个回答。例如，“现在的时间是X，余额是Y。”这样用户的问题就能得到完整的解答了。\n"
-        },
-        {
-          "id": "step_003",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_7bppwjn0",
-            "name": "get_time",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_004",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_7bppwjn0",
-            "name": "get_time",
-            "arguments": "{}"
-          },
-          "result": "2026-09-17T10:42:01+08:00"
-        },
-        {
-          "id": "step_005",
-          "type": "action",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_qlfd0sjh",
-            "name": "get_money",
-            "arguments": "{}"
-          }
-        },
-        {
-          "id": "step_006",
-          "type": "observation",
-          "iteration": 1,
-          "tool_call": {
-            "id": "call_qlfd0sjh",
-            "name": "get_money",
-            "arguments": "{}"
-          },
-          "result": "4"
-        },
-        {
-          "id": "step_007",
-          "type": "finish",
-          "iteration": 2,
-          "content": "当前时间是2026年9月17日 上午10点42分，账户余额为4元。"
-        }
-      ]
-    }
-  },
-  {
     "id": "a38d9181-702c-4869-9893-a6927a1e4dd3",
     "agent_id": "demo-agent",
     "session_id": "b297d5f6-288d-4fa3-8f5d-94041dbe1d15",
@@ -765,6 +750,39 @@
     "created_at": "2026-09-15T16:27:20.335292+08:00",
     "started_at": "2026-09-15T16:27:20.335316+08:00",
     "ended_at": "2026-09-15T16:27:38.811709+08:00"
+  },
+  {
+    "id": "5fe61031-3a11-4e7c-b94f-2cdefd21ac65",
+    "agent_id": "demo-agent",
+    "session_id": "5c201d8a-90ea-42a8-bfc7-51e2008857a9",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在的时间是2026年9月15日16点20分49秒，您的余额还有6元。",
+    "created_at": "2026-09-15T16:20:34.828114+08:00",
+    "started_at": "2026-09-15T16:20:34.828147+08:00",
+    "ended_at": "2026-09-15T16:21:08.150916+08:00"
+  },
+  {
+    "id": "4ed2e7da-1d10-4088-90c2-0e0828792f3f",
+    "agent_id": "demo-agent",
+    "session_id": "e016ec0b-0f06-4b7e-9fa0-07daa8725a3b",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在是2026年9月16日 10:11，当前货币余额为6。需要我帮您做些什么吗？",
+    "created_at": "2026-09-16T10:11:32.109582+08:00",
+    "started_at": "2026-09-16T10:11:32.109606+08:00",
+    "ended_at": "2026-09-16T10:11:53.396269+08:00"
+  },
+  {
+    "id": "1bb378b8-0fc3-46eb-9f1e-b75892165a42",
+    "agent_id": "demo-agent",
+    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
+    "input": "还有多少余额？",
+    "status": "completed",
+    "output": "当前货币余额为8元。",
+    "created_at": "2026-09-14T13:56:10.28855+08:00",
+    "started_at": "2026-09-14T13:56:10.288578+08:00",
+    "ended_at": "2026-09-14T13:56:25.336217+08:00"
   },
   {
     "id": "b5cf27cf-56ae-4759-a176-14935d41cd3f",
@@ -850,50 +868,6 @@
     }
   },
   {
-    "id": "5fe61031-3a11-4e7c-b94f-2cdefd21ac65",
-    "agent_id": "demo-agent",
-    "session_id": "5c201d8a-90ea-42a8-bfc7-51e2008857a9",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "现在的时间是2026年9月15日16点20分49秒，您的余额还有6元。",
-    "created_at": "2026-09-15T16:20:34.828114+08:00",
-    "started_at": "2026-09-15T16:20:34.828147+08:00",
-    "ended_at": "2026-09-15T16:21:08.150916+08:00"
-  },
-  {
-    "id": "991f4adf-feb8-4e1b-bc17-72371ec1b564",
-    "agent_id": "demo-agent",
-    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
-    "input": "现在几点？",
-    "status": "completed",
-    "output": "当前时间是2026年9月14日13点54分44秒（UTC+8）。",
-    "created_at": "2026-09-14T13:54:29.946408+08:00",
-    "started_at": "2026-09-14T13:54:29.946454+08:00",
-    "ended_at": "2026-09-14T13:54:50.189447+08:00"
-  },
-  {
-    "id": "4ed2e7da-1d10-4088-90c2-0e0828792f3f",
-    "agent_id": "demo-agent",
-    "session_id": "e016ec0b-0f06-4b7e-9fa0-07daa8725a3b",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "现在是2026年9月16日 10:11，当前货币余额为6。需要我帮您做些什么吗？",
-    "created_at": "2026-09-16T10:11:32.109582+08:00",
-    "started_at": "2026-09-16T10:11:32.109606+08:00",
-    "ended_at": "2026-09-16T10:11:53.396269+08:00"
-  },
-  {
-    "id": "f2bde41a-1a5e-4798-bf1f-2c322bc3ae01",
-    "agent_id": "demo-agent",
-    "session_id": "04076a4c-df38-4b79-912c-9ef47fb4d6c9",
-    "input": "现在是几点？还有多少余额？",
-    "status": "completed",
-    "output": "当前时间是2026年9月14日13点57分31秒（UTC+8），货币余额为5元。",
-    "created_at": "2026-09-14T13:57:04.479946+08:00",
-    "started_at": "2026-09-14T13:57:04.479958+08:00",
-    "ended_at": "2026-09-14T13:57:43.956642+08:00"
-  },
-  {
     "id": "0f6753c5-5676-4c93-9fdd-ecc92ed4f95e",
     "agent_id": "demo-agent",
     "session_id": "a7956110-42fb-422a-92ff-7c8363aecdcf",
@@ -905,24 +879,127 @@
     "ended_at": "2026-09-14T15:29:41.47228+08:00"
   },
   {
-    "id": "dc079d63-f972-4658-8db7-96ed525c920f",
+    "id": "fc494e42-b44c-490e-9185-015b77388740",
     "agent_id": "demo-agent",
-    "session_id": "a6aeba8a-7888-4a69-9ae8-1499c9150af6",
-    "input": "现在几点？",
+    "session_id": "e4e22fd9-49dd-4097-bb9b-6b4ff5d793e2",
+    "input": "现在是几点？还有多少余额？",
     "status": "completed",
-    "created_at": "2026-09-11T15:26:02.766071+08:00",
-    "started_at": "2026-09-11T15:26:02.766126+08:00",
-    "ended_at": "2026-09-11T15:26:12.285337+08:00"
+    "output": "现在的时间是2026年9月15日 16:54，您的货币余额为3元。",
+    "created_at": "2026-09-15T16:54:34.038374+08:00",
+    "started_at": "2026-09-15T16:54:34.038424+08:00",
+    "ended_at": "2026-09-15T16:54:55.221436+08:00"
   },
   {
-    "id": "d2241e26-5a81-420b-8872-4db91c79da3a",
+    "id": "a6fe6122-587c-4024-92ec-0a548c14f77f",
     "agent_id": "demo-agent",
-    "session_id": "6b55bfcd-c6b3-4a59-b89f-dcafead61376",
+    "session_id": "e226898e-7fc3-4e78-9b63-7cb771cc1c9c",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在的时间是2026年9月16日08点23分45秒，当前货币余额为5元。",
+    "created_at": "2026-09-16T08:23:29.36052+08:00",
+    "started_at": "2026-09-16T08:23:29.360564+08:00",
+    "ended_at": "2026-09-16T08:23:56.715399+08:00"
+  },
+  {
+    "id": "67607be8-a424-4ec8-988c-f4ba702fd793",
+    "agent_id": "demo-agent",
+    "session_id": "70178e34-a480-4c8e-a235-b46de16ffbf8",
+    "input": "现在是几点？还有多少余额？",
+    "status": "completed",
+    "output": "现在的时间是2026年9月17日 10点01分，账户余额为5元。",
+    "created_at": "2026-09-17T10:00:58.878321+08:00",
+    "started_at": "2026-09-17T10:00:58.878348+08:00",
+    "ended_at": "2026-09-17T10:01:24.199422+08:00",
+    "execution": {
+      "steps": [
+        {
+          "id": "step_001",
+          "type": "input",
+          "iteration": 0,
+          "content": "现在是几点？还有多少余额？"
+        },
+        {
+          "id": "step_002",
+          "type": "decision",
+          "iteration": 1,
+          "reasoning": "好的，用户问现在几点了，还有多少余额。首先，我需要确定用户需要的是服务器时间还是其他时间，但根据提供的工具，只有get_time可以获取当前服务器时间，所以应该调用这个函数。然后，用户还问了余额，工具里有get_money函数，可以获取货币余额。所以，我需要分别调用这两个函数，获取时间 and 余额的信息。然后，将结果整理成自然语言回复用户。注意，每个工具调用要放在独立的tool_call标签里，不能同时调用多个。先处理时间，再处理余额，确保顺序正确。最后，用中文回答，保持口语化，不使用专业术语。\n"
+        },
+        {
+          "id": "step_003",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_mpl1049p",
+            "name": "get_time",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_004",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_mpl1049p",
+            "name": "get_time",
+            "arguments": "{}"
+          },
+          "result": "2026-09-17T10:01:10+08:00"
+        },
+        {
+          "id": "step_005",
+          "type": "action",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_rc6oyfez",
+            "name": "get_money",
+            "arguments": "{}"
+          }
+        },
+        {
+          "id": "step_006",
+          "type": "observation",
+          "iteration": 1,
+          "tool_call": {
+            "id": "call_rc6oyfez",
+            "name": "get_money",
+            "arguments": "{}"
+          },
+          "result": "5"
+        },
+        {
+          "id": "step_007",
+          "type": "decision",
+          "iteration": 2,
+          "reasoning": "好的，用户之前问了现在几点和余额有多少，我需要先调用相应的工具来获取这些信息。首先，用户的问题涉及两个部分：当前时间和货币余额。根据之前的工具列表，有两个函数可以使用，分别是get_time和get_money。\n\n首先处理时间部分。用户可能想知道精确的当前时间，所以需要调用get_time函数。这个函数不需要参数，直接返回服务器的时间。然后，用户可能是在管理自己的账户或者进行需要时间戳的操作，比如记录时间或者安排任务，所以准确的时间很重要。\n\n接下来是余额查询。用户询问余额，可能是想确认自己的资金状况，或者在进行交易前检查是否有足够余额。这时候需要调用get_money函数，同样不需要参数，直接获取当前的余额数值。用户可能希望得到一个明确的数字，所以需要确保返回的结果是准确的。\n\n在获取到工具返回的结果后，需要将结果以自然的方式整合到回答中。例如，时间可能返回一个ISO格式的字符串，需要转换成更易读的形式，比如“2026年9月17日 10点01分”。而余额可能直接返回一个数字，需要确认单位是否是元，并且是否需要显示小数点后的零，比如5元是否显示为5.00元。\n\n另外，要注意用户可能的潜在需求。比如，如果余额是5，用户可能想知道是否足够进行某项操作，或者是否有其他费用需要考虑。但根据当前问题，用户只是询问当前余额，所以直接回答即可，无需额外推测。\n\n最后，确保回答清晰、简洁，并且信息准确。将时间和余额分别列出，让用户一目了然。同时，保持语气友好，符合助手的角色。\n"
+        },
+        {
+          "id": "step_008",
+          "type": "finish",
+          "iteration": 2,
+          "content": "现在的时间是2026年9月17日 10点01分，账户余额为5元。"
+        }
+      ]
+    }
+  },
+  {
+    "id": "3dce8f10-ec83-4461-9e6e-c7b5bbae0fc9",
+    "agent_id": "demo-agent",
+    "session_id": "dd3bdfcf-4152-415c-99d2-c89f85c78b2e",
+    "input": "我想知道现在的时间",
+    "status": "completed",
+    "created_at": "2026-09-11T15:20:14.533822+08:00",
+    "started_at": "2026-09-11T15:20:14.533865+08:00",
+    "ended_at": "2026-09-11T15:20:23.206057+08:00"
+  },
+  {
+    "id": "a7a4aeec-7111-43bf-8300-5b33c40999b7",
+    "agent_id": "demo-agent",
+    "session_id": "b15f5d61-d5f3-4d92-9cbd-9a6c23136bed",
     "input": "现在几点了",
     "status": "completed",
     "output": "演示闭环完成：已通过 get_time 工具获取时间。",
-    "created_at": "2026-09-01T17:25:14.907295+08:00",
-    "started_at": "2026-09-01T17:25:14.907311+08:00",
-    "ended_at": "2026-09-01T17:25:14.907687+08:00"
+    "created_at": "2026-09-02T14:30:07.23113+08:00",
+    "started_at": "2026-09-02T14:30:07.231166+08:00",
+    "ended_at": "2026-09-02T14:30:07.231904+08:00"
   }
 ]

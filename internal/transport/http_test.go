@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Jeffery-source/agent-runtime/internal/event"
 	"github.com/Jeffery-source/agent-runtime/internal/session"
 	"github.com/Jeffery-source/agent-runtime/internal/task"
 )
@@ -34,6 +35,12 @@ func (f *fakeTaskService) Get(
 	taskID string,
 ) (*task.Task, error) {
 	return f.getTask, f.getErr
+}
+
+func (f *fakeTaskService) Events(
+	taskID string,
+) (<-chan event.Event, error) {
+	return make(chan event.Event), nil
 }
 
 func (f *fakeTaskService) Execute(

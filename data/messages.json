@@ -306,6 +306,41 @@
       "content": "当前时间是17:00:42，您的账户余额为6元。"
     }
   ],
+  "2d6a7679-4a62-447b-bd55-d8b1da054b73": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_7hi3uvu1",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_0f03kgu8",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-17T16:52:31+08:00",
+      "tool_call_id": "call_7hi3uvu1"
+    },
+    {
+      "role": "tool",
+      "content": "5",
+      "tool_call_id": "call_0f03kgu8"
+    },
+    {
+      "role": "assistant",
+      "content": "现在的时间是2026年9月17日16点52分31秒，账户余额还有5元。"
+    }
+  ],
   "5c201d8a-90ea-42a8-bfc7-51e2008857a9": [
     {
       "role": "user",

@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"testing"
+
+	"github.com/Jeffery-source/agent-runtime/internal/event"
 )
 
 type workerMockService struct {
@@ -11,6 +13,11 @@ type workerMockService struct {
 	err  error
 }
 
+func (f *workerMockService) Events(
+	taskID string,
+) (<-chan event.Event, error) {
+	return make(chan event.Event), nil
+}
 func (m *workerMockService) Submit(
 	ctx context.Context,
 	agentID string,

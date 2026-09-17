@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Jeffery-source/agent-runtime/internal/event"
 	"github.com/Jeffery-source/agent-runtime/internal/execution"
 )
 
@@ -55,6 +56,7 @@ func (m *Manager) Create(
 		Input:     input,
 		Status:    StatusPending,
 		CreatedAt: time.Now(),
+		Events:    make(chan event.Event, 32),
 	}
 
 	m.tasks[id] = task
@@ -253,4 +255,16 @@ func cloneTask(t *Task) *Task {
 		copy.Execution = &execCopy
 	}
 	return &copy
+}
+
+func (m *Manager) Events(taskID string) (<-chan event.Event, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	t, ok := m.tasks[taskID]
+	if !ok {
+		return nil, ErrTaskNotFound
+	}
+
+	return t.Events, nil
 }

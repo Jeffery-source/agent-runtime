@@ -3,6 +3,7 @@ package transport
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/Jeffery-source/agent-runtime/internal/session"
@@ -34,6 +35,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /v1/tasks/{id}", s.handleGet)
 	mux.HandleFunc("POST /v1/tasks/{id}/cancel", s.handleCancel)
 
+	mux.HandleFunc("GET /v1/tasks/{id}/events", s.handleEvents)
 	return mux
 }
 
@@ -163,4 +165,83 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 func writeError(w http.ResponseWriter, status int, msg string) {
 	writeJSON(w, status, map[string]string{"error": msg})
+}
+
+func (s *Server) handleEvents(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	taskID := r.PathValue("id")
+
+	events, err := s.tasks.Events(taskID)
+	if err != nil {
+		if errors.Is(err, task.ErrTaskNotFound) {
+			writeError(w, http.StatusNotFound, "task not found")
+			return
+		}
+
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		writeError(
+			w,
+			http.StatusInternalServerError,
+			"streaming unsupported",
+		)
+		return
+	}
+
+	w.Header().Set(
+		"Content-Type",
+		"text/event-stream",
+	)
+	w.Header().Set(
+		"Cache-Control",
+		"no-cache",
+	)
+	w.Header().Set(
+		"Connection",
+		"keep-alive",
+	)
+	w.Header().Set(
+		"X-Accel-Buffering",
+		"no",
+	)
+
+	flusher.Flush()
+
+	for {
+		select {
+
+		case <-r.Context().Done():
+			return
+
+		case e, ok := <-events:
+			if !ok {
+				return
+			}
+
+			data, err := json.Marshal(e.Data)
+			if err != nil {
+				continue
+			}
+
+			fmt.Fprintf(
+				w,
+				"event: %s\n",
+				e.Type,
+			)
+
+			fmt.Fprintf(
+				w,
+				"data: %s\n\n",
+				data,
+			)
+
+			flusher.Flush()
+		}
+	}
 }

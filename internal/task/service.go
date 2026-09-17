@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/Jeffery-source/agent-runtime/internal/event"
 	"github.com/google/uuid"
 )
 
@@ -47,6 +48,8 @@ type TaskService interface {
 	Cancel(
 		taskID string,
 	) error
+
+	Events(taskID string) (<-chan event.Event, error)
 }
 
 type Service struct {
@@ -199,6 +202,29 @@ func (s *Service) Get(
 	}
 
 	return result, nil
+}
+
+func (s *Service) Events(
+	taskID string,
+) (<-chan event.Event, error) {
+
+	if s.tasks == nil {
+		return nil, errors.New("task manager is nil")
+	}
+
+	if taskID == "" {
+		return nil, errors.New("task ID is empty")
+	}
+
+	task, err := s.tasks.Get(taskID)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"get task: %w",
+			err,
+		)
+	}
+
+	return task.Events, nil
 }
 
 func (s *Service) Execute(

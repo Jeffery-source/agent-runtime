@@ -78,6 +78,7 @@ func (e *Executor) Execute(
 			AgentID:   currentTask.AgentID,
 			SessionID: currentTask.SessionID,
 			Input:     currentTask.Input,
+			EventSink: currentTask,
 		},
 	)
 

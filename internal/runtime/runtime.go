@@ -9,6 +9,7 @@ import (
 
 	"github.com/Jeffery-source/agent-runtime/internal/agent"
 	"github.com/Jeffery-source/agent-runtime/internal/agentcontext"
+	"github.com/Jeffery-source/agent-runtime/internal/event"
 	"github.com/Jeffery-source/agent-runtime/internal/execution"
 	"github.com/Jeffery-source/agent-runtime/internal/memory"
 	"github.com/Jeffery-source/agent-runtime/internal/message"
@@ -64,6 +65,7 @@ type RunRequest struct {
 	AgentID   string
 	SessionID string
 	Input     string
+	EventSink event.Sink
 }
 
 type RunResponse struct {
@@ -135,6 +137,7 @@ func (r *Runtime) Run(
 		ag,
 		req.SessionID,
 		exec,
+		req.EventSink,
 	)
 	if err != nil {
 
@@ -185,6 +188,7 @@ func (r *Runtime) runLoop(
 	ag *agent.Agent,
 	sessionID string,
 	exec *execution.Execution,
+	sink event.Sink,
 ) (string, error) {
 
 	maxIterations := ag.MaxIterations
@@ -230,6 +234,18 @@ func (r *Runtime) runLoop(
 			len(skillDefs),
 			len(toolDefs),
 		)
+		if sink != nil {
+			sink.Emit(event.Event{
+				Type: "model_call",
+				Data: map[string]any{
+					"iteration": iteration + 1,
+					"model":     ag.Model,
+					"messages":  len(agentCtx.ToModelMessages()),
+					"tools":     len(toolDefs),
+				},
+			})
+		}
+
 		response, err := r.model.Chat(
 			ctx,
 			model.Request{
@@ -254,7 +270,16 @@ func (r *Runtime) runLoop(
 				err,
 			)
 		}
-
+		if sink != nil {
+			sink.Emit(event.Event{
+				Type: "model_response",
+				Data: map[string]any{
+					"iteration":     iteration + 1,
+					"finish_reason": response.FinishReason,
+					"tool_calls":    len(response.Message.ToolCalls),
+				},
+			})
+		}
 		hasToolCalls := len(response.Message.ToolCalls) > 0
 
 		if hasToolCalls {
@@ -276,6 +301,17 @@ func (r *Runtime) runLoop(
 				Summary:   summary,
 				Reasoning: response.Message.Reasoning,
 			})
+			if sink != nil {
+				sink.Emit(event.Event{
+					Type: "decision",
+					Data: map[string]any{
+						"iteration": iteration + 1,
+						"decision":  decision,
+						"summary":   summary,
+						"reasoning": response.Message.Reasoning,
+					},
+				})
+			}
 		}
 		log.Printf(
 			"[agent] iteration=%d finish_reason=%s tool_calls=%d decision=%s",
@@ -301,6 +337,15 @@ func (r *Runtime) runLoop(
 				Iteration: iteration + 1,
 				Content:   response.Message.Content,
 			})
+			if sink != nil {
+				sink.Emit(event.Event{
+					Type: "final",
+					Data: map[string]any{
+						"iteration": iteration + 1,
+						"content":   response.Message.Content,
+					},
+				})
+			}
 			for _, step := range exec.GetSteps() {
 				if step.ToolCall != nil {
 					log.Printf(
@@ -374,6 +419,7 @@ func (r *Runtime) runLoop(
 			response.Message.ToolCalls,
 			exec,
 			iteration+1,
+			sink,
 		)
 		if err != nil {
 			return "", err
@@ -461,6 +507,7 @@ func (r *Runtime) executeToolCalls(
 	toolCalls []model.ToolCall,
 	exec *execution.Execution,
 	iteration int,
+	sink event.Sink,
 ) error {
 
 	for _, toolCall := range toolCalls {
@@ -493,6 +540,17 @@ func (r *Runtime) executeToolCalls(
 				Arguments: string(toolCall.Arguments),
 			},
 		})
+		if sink != nil {
+			sink.Emit(event.Event{
+				Type: "tool_call",
+				Data: map[string]any{
+					"iteration": iteration,
+					"id":        toolCall.ID,
+					"name":      toolCall.Name,
+					"arguments": string(toolCall.Arguments),
+				},
+			})
+		}
 		result, err := t.Execute(
 			ctx,
 			toolCall.Arguments,
@@ -512,7 +570,17 @@ func (r *Runtime) executeToolCalls(
 			// Tool 业务错误作为 Tool Result 返回给 Model。
 			result = err.Error()
 		}
-
+		if sink != nil {
+			sink.Emit(event.Event{
+				Type: "tool_result",
+				Data: map[string]any{
+					"iteration": iteration,
+					"id":        toolCall.ID,
+					"name":      toolCall.Name,
+					"result":    result,
+				},
+			})
+		}
 		exec.AddStep(execution.Step{
 			Type:      execution.StepObservation,
 			Iteration: iteration,
