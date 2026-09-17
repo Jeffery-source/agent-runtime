@@ -26,6 +26,7 @@ type gatewayFunctionCall struct {
 type gatewayMessage struct {
 	Role       string            `json:"role"`
 	Content    string            `json:"content"`
+	Reasoning  string            `json:"reasoning,omitempty"`
 	ToolCalls  []gatewayToolCall `json:"tool_calls,omitempty"`
 	ToolCallID string            `json:"tool_call_id,omitempty"`
 }
@@ -248,6 +249,7 @@ func convertGatewayMessage(msg gatewayMessage) Message {
 	result := Message{
 		Role:       msg.Role,
 		Content:    msg.Content,
+		Reasoning:  msg.Reasoning,
 		ToolCallID: msg.ToolCallID,
 	}
 

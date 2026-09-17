@@ -9,6 +9,7 @@ import (
 
 	"github.com/Jeffery-source/agent-runtime/internal/agent"
 	"github.com/Jeffery-source/agent-runtime/internal/agentcontext"
+	"github.com/Jeffery-source/agent-runtime/internal/execution"
 	"github.com/Jeffery-source/agent-runtime/internal/memory"
 	"github.com/Jeffery-source/agent-runtime/internal/message"
 	"github.com/Jeffery-source/agent-runtime/internal/model"
@@ -66,9 +67,10 @@ type RunRequest struct {
 }
 
 type RunResponse struct {
-	SessionID string
-	Content   string
-	Status    RunStatus
+	SessionID string               `json:"session_id"`
+	Content   string               `json:"content"`
+	Status    RunStatus            `json:"status"`
+	Execution *execution.Execution `json:"execution,omitempty"`
 }
 
 func (r *Runtime) Run(
@@ -121,10 +123,18 @@ func (r *Runtime) Run(
 		)
 	}
 
+	exec := execution.NewExecution()
+
+	exec.AddStep(execution.Step{
+		Type:      execution.StepInput,
+		Iteration: 0,
+		Content:   req.Input,
+	})
 	content, err := r.runLoop(
 		ctx,
 		ag,
 		req.SessionID,
+		exec,
 	)
 	if err != nil {
 
@@ -139,6 +149,7 @@ func (r *Runtime) Run(
 			SessionID: req.SessionID,
 			Content:   content,
 			Status:    status,
+			Execution: exec,
 		}, err
 	}
 
@@ -146,6 +157,7 @@ func (r *Runtime) Run(
 		SessionID: req.SessionID,
 		Content:   content,
 		Status:    RunStatusCompleted,
+		Execution: exec,
 	}, nil
 }
 func (r *Runtime) skillInstructions(ag *agent.Agent) string {
@@ -172,6 +184,7 @@ func (r *Runtime) runLoop(
 	ctx context.Context,
 	ag *agent.Agent,
 	sessionID string,
+	exec *execution.Execution,
 ) (string, error) {
 
 	maxIterations := ag.MaxIterations
@@ -241,11 +254,40 @@ func (r *Runtime) runLoop(
 				err,
 			)
 		}
+
+		hasToolCalls := len(response.Message.ToolCalls) > 0
+
+		if hasToolCalls {
+
+			decision := execution.DecisionCallTool
+
+			if len(response.Message.ToolCalls) > 1 {
+				decision = execution.DecisionCallTools
+			}
+
+			summary := buildDecisionSummary(
+				response.Message.ToolCalls,
+			)
+
+			exec.AddStep(execution.Step{
+				Type:      execution.StepDecision,
+				Iteration: iteration + 1,
+				Decision:  decision,
+				Summary:   summary,
+				Reasoning: response.Message.Reasoning,
+			})
+		}
 		log.Printf(
-			"[agent] iteration=%d finish_reason=%s tool_calls=%d",
+			"[agent] iteration=%d finish_reason=%s tool_calls=%d decision=%s",
 			iteration+1,
 			response.FinishReason,
 			len(response.Message.ToolCalls),
+			func() string {
+				if len(response.Message.ToolCalls) > 0 {
+					return "call_tools"
+				}
+				return "finish"
+			}(),
 		)
 		// 没有 Tool Call，Agent 完成。
 		if len(response.Message.ToolCalls) == 0 {
@@ -254,6 +296,35 @@ func (r *Runtime) runLoop(
 				iteration+1,
 				response.Message.Content,
 			)
+			exec.AddStep(execution.Step{
+				Type:      execution.StepFinish,
+				Iteration: iteration + 1,
+				Content:   response.Message.Content,
+			})
+			for _, step := range exec.GetSteps() {
+				if step.ToolCall != nil {
+					log.Printf(
+						"[execution] id=%s type=%s iteration=%d tool_id=%s tool_name=%s arguments=%s result=%s",
+						step.ID,
+						step.Type,
+						step.Iteration,
+						step.ToolCall.ID,
+						step.ToolCall.Name,
+						string(step.ToolCall.Arguments),
+						step.Result,
+					)
+				} else {
+					log.Printf(
+						"[execution] id=%s type=%s iteration=%d content=%s reasoning=%s result=%s",
+						step.ID,
+						step.Type,
+						step.Iteration,
+						step.Content,
+						step.Reasoning,
+						step.Result,
+					)
+				}
+			}
 			err := r.saveMessage(
 				ctx,
 				sessionID,
@@ -301,12 +372,14 @@ func (r *Runtime) runLoop(
 			ctx,
 			sessionID,
 			response.Message.ToolCalls,
+			exec,
+			iteration+1,
 		)
 		if err != nil {
 			return "", err
 		}
 	}
-
+	log.Printf("[execution] steps=%+v", exec.GetSteps())
 	return "", ErrMaxIterations
 }
 
@@ -386,6 +459,8 @@ func (r *Runtime) executeToolCalls(
 	ctx context.Context,
 	sessionID string,
 	toolCalls []model.ToolCall,
+	exec *execution.Execution,
+	iteration int,
 ) error {
 
 	for _, toolCall := range toolCalls {
@@ -409,6 +484,15 @@ func (r *Runtime) executeToolCalls(
 			toolCall.Name,
 			string(toolCall.Arguments),
 		)
+		exec.AddStep(execution.Step{
+			Type:      execution.StepAction,
+			Iteration: iteration,
+			ToolCall: &execution.ToolCallInfo{
+				ID:        toolCall.ID,
+				Name:      toolCall.Name,
+				Arguments: string(toolCall.Arguments),
+			},
+		})
 		result, err := t.Execute(
 			ctx,
 			toolCall.Arguments,
@@ -429,6 +513,16 @@ func (r *Runtime) executeToolCalls(
 			result = err.Error()
 		}
 
+		exec.AddStep(execution.Step{
+			Type:      execution.StepObservation,
+			Iteration: iteration,
+			ToolCall: &execution.ToolCallInfo{
+				ID:        toolCall.ID,
+				Name:      toolCall.Name,
+				Arguments: string(toolCall.Arguments),
+			},
+			Result: result,
+		})
 		err = r.saveMessage(
 			ctx,
 			sessionID,
@@ -472,4 +566,25 @@ func convertToolCalls(
 	}
 
 	return result
+}
+
+func buildDecisionSummary(
+	toolCalls []model.ToolCall,
+) string {
+
+	names := make([]string, 0)
+
+	for _, call := range toolCalls {
+		names = append(names, call.Name)
+	}
+
+	switch len(names) {
+
+	case 1:
+		return "调用工具查询：" + names[0]
+
+	default:
+		return "调用多个工具查询：" +
+			strings.Join(names, "、")
+	}
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/Jeffery-source/agent-runtime/internal/execution"
 )
 
 type Manager struct {
@@ -125,6 +127,7 @@ func (m *Manager) Start(taskID string) error {
 func (m *Manager) Complete(
 	taskID string,
 	output string,
+	exec *execution.Execution,
 ) error {
 
 	m.mu.Lock()
@@ -152,6 +155,7 @@ func (m *Manager) Complete(
 
 	t.Status = StatusCompleted
 	t.Output = output
+	t.Execution = exec
 	t.EndedAt = &now
 
 	return nil
@@ -244,5 +248,9 @@ func cloneTask(t *Task) *Task {
 		copy.EndedAt = &endedAt
 	}
 
+	if t.Execution != nil {
+		execCopy := *t.Execution
+		copy.Execution = &execCopy
+	}
 	return &copy
 }

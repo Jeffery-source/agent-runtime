@@ -630,6 +630,7 @@ func TestServiceExecuteInvalidStatus(t *testing.T) {
 	err = manager.Complete(
 		created.ID,
 		"已经完成",
+		nil,
 	)
 
 	if err != nil {

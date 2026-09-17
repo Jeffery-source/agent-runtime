@@ -201,6 +201,7 @@ func TestTaskManagerLifecycle(t *testing.T) {
 	err = manager.Complete(
 		"task-001",
 		"任务执行完成",
+		nil,
 	)
 
 	if err != nil {
@@ -251,6 +252,7 @@ func TestTaskManagerInvalidTransition(t *testing.T) {
 	err = manager.Complete(
 		"task-001",
 		"完成",
+		nil,
 	)
 
 	if !errors.Is(err, ErrInvalidStatusTransition) {
@@ -608,6 +610,7 @@ func TestManagerStateTransitions(t *testing.T) {
 	err = manager.Complete(
 		"task-001",
 		"完成",
+		nil,
 	)
 
 	if err == nil {
@@ -651,6 +654,7 @@ func TestManagerStateTransitions(t *testing.T) {
 	err = manager.Complete(
 		"task-001",
 		"执行成功",
+		nil,
 	)
 
 	if err != nil {
@@ -664,6 +668,7 @@ func TestManagerStateTransitions(t *testing.T) {
 	err = manager.Complete(
 		"task-001",
 		"再次完成",
+		nil,
 	)
 
 	if err == nil {
@@ -823,6 +828,7 @@ func TestManagerRunningToCanceled(t *testing.T) {
 	err = manager.Complete(
 		"task-001",
 		"late result",
+		nil,
 	)
 
 	if err == nil {

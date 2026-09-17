@@ -145,6 +145,7 @@ func (e *Executor) Execute(
 	err = e.tasks.Complete(
 		taskID,
 		response.Content,
+		response.Execution,
 	)
 
 	if err != nil {

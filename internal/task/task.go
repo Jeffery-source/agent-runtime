@@ -2,6 +2,8 @@ package task
 
 import (
 	"time"
+
+	"github.com/Jeffery-source/agent-runtime/internal/execution"
 )
 
 type Status string
@@ -25,7 +27,8 @@ type Task struct {
 	Output string `json:"output,omitempty"`
 	Error  string `json:"error,omitempty"`
 
-	CreatedAt time.Time  `json:"created_at"`
-	StartedAt *time.Time `json:"started_at,omitempty"`
-	EndedAt   *time.Time `json:"ended_at,omitempty"`
+	CreatedAt time.Time            `json:"created_at"`
+	StartedAt *time.Time           `json:"started_at,omitempty"`
+	EndedAt   *time.Time           `json:"ended_at,omitempty"`
+	Execution *execution.Execution `json:"execution,omitempty"`
 }

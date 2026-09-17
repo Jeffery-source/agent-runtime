@@ -26,6 +26,7 @@ type ToolDefinition struct {
 type Message struct {
 	Role       string
 	Content    string
+	Reasoning  string
 	ToolCalls  []ToolCall
 	ToolCallID string
 }
