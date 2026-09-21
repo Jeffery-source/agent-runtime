@@ -27,16 +27,93 @@ func NewServer(
 	}
 }
 
+const (
+	// allowedOrigin 是允许跨域访问的来源（Web Console）。
+	allowedOrigin = "http://localhost:5173"
+
+	// allowedMethods 与 allowedHeaders 是 CORS 协商放行的方法与请求头。
+	allowedMethods = "GET, POST, OPTIONS"
+	allowedHeaders = "Content-Type"
+)
+
 func (s *Server) Handler() http.Handler {
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("GET /healthz", s.handleHealthz)
+
 	mux.HandleFunc("POST /v1/sessions", s.handleCreateSession)
 	mux.HandleFunc("POST /v1/tasks", s.handleSubmit)
+	mux.HandleFunc("GET /v1/tasks", s.handleList)
 	mux.HandleFunc("GET /v1/tasks/{id}", s.handleGet)
 	mux.HandleFunc("POST /v1/tasks/{id}/cancel", s.handleCancel)
 
 	mux.HandleFunc("GET /v1/tasks/{id}/events", s.handleEvents)
-	return mux
+
+	return corsMiddleware(mux)
+}
+
+// corsMiddleware 统一处理跨域请求，使 Web Console 可以访问本服务。
+// CORS 收口在路由层，各业务 Handler 不需要关心跨域细节。
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(
+		w http.ResponseWriter,
+		r *http.Request,
+	) {
+		if r.Header.Get("Origin") == allowedOrigin {
+			w.Header().Set(
+				"Access-Control-Allow-Origin",
+				allowedOrigin,
+			)
+			w.Header().Set(
+				"Access-Control-Allow-Methods",
+				allowedMethods,
+			)
+			w.Header().Set(
+				"Access-Control-Allow-Headers",
+				allowedHeaders,
+			)
+			w.Header().Add("Vary", "Origin")
+		}
+
+		// preflight 请求不进入业务 Handler，直接返回 204。
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (s *Server) handleHealthz(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	writeJSON(w, http.StatusOK, map[string]string{
+		"status": "ok",
+	})
+}
+
+type listTasksResponse struct {
+	Items []*task.Task `json:"items"`
+	Total int          `json:"total"`
+}
+
+func (s *Server) handleList(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	items := s.tasks.List()
+
+	// 空列表序列化为 []，避免前端拿到 null。
+	if items == nil {
+		items = []*task.Task{}
+	}
+
+	writeJSON(w, http.StatusOK, listTasksResponse{
+		Items: items,
+		Total: len(items),
+	})
 }
 
 type createSessionRequest struct {

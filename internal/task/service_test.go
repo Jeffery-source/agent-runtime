@@ -994,3 +994,94 @@ func TestServiceExecuteOnlyOnce(
 		)
 	}
 }
+
+func TestServiceListReturnsNewestFirst(
+	t *testing.T,
+) {
+	manager := NewManager()
+
+	older, err := manager.Create(
+		"task-old",
+		"demo-agent",
+		"session-001",
+		"旧任务",
+	)
+	if err != nil {
+		t.Fatalf("create old task failed: %v", err)
+	}
+
+	newer, err := manager.Create(
+		"task-new",
+		"demo-agent",
+		"session-001",
+		"新任务",
+	)
+	if err != nil {
+		t.Fatalf("create new task failed: %v", err)
+	}
+
+	// 固定创建时间，验证 Service 按时间倒序返回。
+	base := time.Now()
+
+	manager.mu.Lock()
+	manager.tasks[older.ID].CreatedAt = base.Add(-time.Minute)
+	manager.tasks[newer.ID].CreatedAt = base
+	manager.mu.Unlock()
+
+	service := NewService(manager, &mockExecutor{})
+
+	defer service.Shutdown()
+
+	items := service.List()
+
+	if len(items) != 2 {
+		t.Fatalf(
+			"expected 2 tasks, got %d",
+			len(items),
+		)
+	}
+
+	if items[0].ID != "task-new" {
+		t.Fatalf(
+			"expected newest first, got %q",
+			items[0].ID,
+		)
+	}
+
+	if items[1].ID != "task-old" {
+		t.Fatalf(
+			"expected oldest last, got %q",
+			items[1].ID,
+		)
+	}
+
+	// List 返回副本，外部修改不应影响内部状态。
+	items[0].Input = "changed"
+
+	manager.mu.RLock()
+	internalInput := manager.tasks["task-new"].Input
+	manager.mu.RUnlock()
+
+	if internalInput == "changed" {
+		t.Fatal("List should return copies")
+	}
+}
+
+func TestServiceListEmpty(t *testing.T) {
+	service := NewService(NewManager(), &mockExecutor{})
+
+	defer service.Shutdown()
+
+	items := service.List()
+
+	if items == nil {
+		t.Fatal("expected non-nil empty slice")
+	}
+
+	if len(items) != 0 {
+		t.Fatalf(
+			"expected 0 tasks, got %d",
+			len(items),
+		)
+	}
+}

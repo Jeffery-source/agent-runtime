@@ -55,7 +55,25 @@ func (f *FileStore) Save(tasks []*Task) error {
 		}
 	}
 
-	return os.WriteFile(f.path, data, 0o644)
+	return writeFileAtomic(f.path, data)
+}
+
+// writeFileAtomic 先写同目录临时文件，再 rename 原子替换目标文件。
+// 这样即使进程在写入过程中被中断，目标文件仍保持上一次的完整内容，
+// 不会出现半截 JSON 导致下次启动恢复失败。
+func writeFileAtomic(path string, data []byte) error {
+	tmp := path + ".tmp"
+
+	if err := os.WriteFile(tmp, data, 0o644); err != nil {
+		return err
+	}
+
+	if err := os.Rename(tmp, path); err != nil {
+		_ = os.Remove(tmp)
+		return err
+	}
+
+	return nil
 }
 
 func (f *FileStore) Load() ([]*Task, error) {

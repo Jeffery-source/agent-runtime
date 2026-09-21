@@ -99,5 +99,22 @@ func (f *FileStore) persist() error {
 		}
 	}
 
-	return os.WriteFile(f.path, data, 0o644)
+	return writeFileAtomic(f.path, data)
+}
+
+// writeFileAtomic 先写同目录临时文件，再 rename 原子替换目标文件，
+// 避免进程写入中途被中断时留下半截 JSON。
+func writeFileAtomic(path string, data []byte) error {
+	tmp := path + ".tmp"
+
+	if err := os.WriteFile(tmp, data, 0o644); err != nil {
+		return err
+	}
+
+	if err := os.Rename(tmp, path); err != nil {
+		_ = os.Remove(tmp)
+		return err
+	}
+
+	return nil
 }

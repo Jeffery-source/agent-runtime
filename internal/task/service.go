@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 	"sync"
 
 	"github.com/Jeffery-source/agent-runtime/internal/event"
@@ -32,6 +33,9 @@ type TaskService interface {
 	Get(
 		taskID string,
 	) (*Task, error)
+
+	// List 返回全部任务，供 Web Console 等调用方展示任务列表。
+	List() []*Task
 
 	Execute(
 		ctx context.Context,
@@ -202,6 +206,25 @@ func (s *Service) Get(
 	}
 
 	return result, nil
+}
+
+// List 返回全部任务，最新的排在前面，便于调用方直接展示。
+func (s *Service) List() []*Task {
+
+	if s.tasks == nil {
+		return []*Task{}
+	}
+
+	items := s.tasks.List()
+
+	sort.SliceStable(items, func(i, j int) bool {
+		if items[i].CreatedAt.Equal(items[j].CreatedAt) {
+			return items[i].ID < items[j].ID
+		}
+		return items[i].CreatedAt.After(items[j].CreatedAt)
+	})
+
+	return items
 }
 
 func (s *Service) Events(

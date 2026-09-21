@@ -80,7 +80,7 @@ func TestManagerRestore(t *testing.T) {
 			Status:    StatusCompleted,
 		},
 		{ID: "", AgentID: "a2"}, // 空 ID 应被忽略
-		nil,                      // nil 应被忽略
+		nil,                     // nil 应被忽略
 	}
 
 	if err := m.Restore(tasks); err != nil {

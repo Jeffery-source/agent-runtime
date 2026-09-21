@@ -41,6 +41,10 @@ func (m *workerMockService) Get(
 	return m.task, m.err
 }
 
+func (m *workerMockService) List() []*Task {
+	return nil
+}
+
 func (m *workerMockService) Execute(
 	ctx context.Context,
 	taskID string,

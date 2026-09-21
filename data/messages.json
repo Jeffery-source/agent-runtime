@@ -376,6 +376,41 @@
       "content": "现在的时间是2026年9月15日16点20分49秒，您的余额还有6元。"
     }
   ],
+  "699d2192-1060-4283-9a39-15abba5da6e9": [
+    {
+      "role": "user",
+      "content": "今天是几号，我的余额还有多少？\n"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_ged0wofk",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_dw0qf107",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-20T14:26:30+08:00",
+      "tool_call_id": "call_ged0wofk"
+    },
+    {
+      "role": "tool",
+      "content": "6",
+      "tool_call_id": "call_dw0qf107"
+    },
+    {
+      "role": "assistant",
+      "content": "今天是9月20日，您的余额还有6元。"
+    }
+  ],
   "6b55bfcd-c6b3-4a59-b89f-dcafead61376": [
     {
       "role": "user",
@@ -399,6 +434,41 @@
     {
       "role": "assistant",
       "content": "演示闭环完成：已通过 get_time 工具获取时间。"
+    }
+  ],
+  "6f86028b-13d8-4d37-937b-c66271aaaedb": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_elb4jnp7",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_8fwkpvht",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-21T13:46:07+08:00",
+      "tool_call_id": "call_elb4jnp7"
+    },
+    {
+      "role": "tool",
+      "content": "9",
+      "tool_call_id": "call_8fwkpvht"
+    },
+    {
+      "role": "assistant",
+      "content": "现在的时间是2026年9月21日13点46分，当前货币余额为9元。"
     }
   ],
   "70178e34-a480-4c8e-a235-b46de16ffbf8": [
@@ -434,6 +504,41 @@
     {
       "role": "assistant",
       "content": "现在的时间是2026年9月17日 10点01分，账户余额为5元。"
+    }
+  ],
+  "72fb5ea5-cd2f-4c91-bfc2-42b3e423c93d": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_pxipde1z",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_s11gyy4d",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-20T15:34:24+08:00",
+      "tool_call_id": "call_pxipde1z"
+    },
+    {
+      "role": "tool",
+      "content": "2",
+      "tool_call_id": "call_s11gyy4d"
+    },
+    {
+      "role": "assistant",
+      "content": "当前时间是2026年9月20日 15:34:24，您的货币余额为2元。"
     }
   ],
   "7e1085f1-6e4d-491c-ac1e-cbd9404ff85d": [
@@ -660,6 +765,41 @@
       "content": "现在几点？"
     }
   ],
+  "c1f29afd-22a3-485b-81ec-d3407b5219b2": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_rhqw1rgl",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_cgszanp4",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-20T14:24:26+08:00",
+      "tool_call_id": "call_rhqw1rgl"
+    },
+    {
+      "role": "tool",
+      "content": "6",
+      "tool_call_id": "call_cgszanp4"
+    },
+    {
+      "role": "assistant",
+      "content": "当前时间是：2026年9月20日 下午2:24  \n货币余额是：6元  \n\n需要帮您进行其他操作吗？"
+    }
+  ],
   "cc90dd6b-66dc-4146-b015-e14b0b48ee87": [
     {
       "role": "user",
@@ -740,6 +880,41 @@
       "content": "当前时间是2026年9月15日下午4点42分，您的货币余额为5元。"
     }
   ],
+  "d9e12620-526f-440b-aa01-68f90f95d25a": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_jyr6d3f2",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_by110c2w",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-20T14:51:05+08:00",
+      "tool_call_id": "call_jyr6d3f2"
+    },
+    {
+      "role": "tool",
+      "content": "4",
+      "tool_call_id": "call_by110c2w"
+    },
+    {
+      "role": "assistant",
+      "content": "当前时间是2026年9月20日14点51分，您的账户余额为4元。"
+    }
+  ],
   "db59d5c1-2139-49de-b07b-80788b63d9fa": [
     {
       "role": "user",
@@ -782,6 +957,12 @@
     },
     {
       "role": "assistant"
+    }
+  ],
+  "dd824c89-9a8b-4328-9d4e-2906606af580": [
+    {
+      "role": "user",
+      "content": "现在几点"
     }
   ],
   "demo-session": [
@@ -1097,6 +1278,41 @@
     {
       "role": "assistant",
       "content": "现在是上午11点，当前余额为7。"
+    }
+  ],
+  "e5949b57-c1e8-427f-a182-519d3b2b2bfb": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_fe9mgdsd",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_fryj074e",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-20T14:32:34+08:00",
+      "tool_call_id": "call_fe9mgdsd"
+    },
+    {
+      "role": "tool",
+      "content": "5",
+      "tool_call_id": "call_fryj074e"
+    },
+    {
+      "role": "assistant",
+      "content": "现在的时间是2026年9月20日14点32分34秒，当前货币余额为5元。"
     }
   ],
   "f51f36cf-0fba-428c-b7c5-c1a75ba881f2": [

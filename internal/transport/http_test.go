@@ -21,6 +21,8 @@ type fakeTaskService struct {
 	getTask    *task.Task
 	getErr     error
 	cancelErr  error
+	listTasks  []*task.Task
+	eventsCh   chan event.Event
 }
 
 func (f *fakeTaskService) Create(
@@ -37,9 +39,16 @@ func (f *fakeTaskService) Get(
 	return f.getTask, f.getErr
 }
 
+func (f *fakeTaskService) List() []*task.Task {
+	return f.listTasks
+}
+
 func (f *fakeTaskService) Events(
 	taskID string,
 ) (<-chan event.Event, error) {
+	if f.eventsCh != nil {
+		return f.eventsCh, nil
+	}
 	return make(chan event.Event), nil
 }
 
@@ -79,11 +88,29 @@ func doRequest(
 
 	t.Helper()
 
+	return doRequestWithHeaders(t, s, method, path, body, nil)
+}
+
+func doRequestWithHeaders(
+	t *testing.T,
+	s *Server,
+	method string,
+	path string,
+	body string,
+	headers map[string]string,
+) *httptest.ResponseRecorder {
+
+	t.Helper()
+
 	var req *http.Request
 	if body == "" {
 		req = httptest.NewRequest(method, path, nil)
 	} else {
 		req = httptest.NewRequest(method, path, strings.NewReader(body))
+	}
+
+	for k, v := range headers {
+		req.Header.Set(k, v)
 	}
 
 	rec := httptest.NewRecorder()
@@ -252,5 +279,194 @@ func TestCancelTaskConflict(t *testing.T) {
 	rec := doRequest(t, s, http.MethodPost, "/v1/tasks/t1/cancel", "")
 	if rec.Code != http.StatusConflict {
 		t.Fatalf("expected 409, got %d", rec.Code)
+	}
+}
+
+func TestHealthz(t *testing.T) {
+	s := newTestServer(&fakeTaskService{})
+
+	rec := doRequest(t, s, http.MethodGet, "/healthz", "")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+
+	var resp map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if resp["status"] != "ok" {
+		t.Fatalf("expected status ok, got %q", resp["status"])
+	}
+}
+
+func TestCORSHeaders(t *testing.T) {
+	s := newTestServer(&fakeTaskService{})
+
+	rec := doRequestWithHeaders(
+		t,
+		s,
+		http.MethodGet,
+		"/healthz",
+		"",
+		map[string]string{"Origin": allowedOrigin},
+	)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+
+	if got := rec.Header().Get("Access-Control-Allow-Origin"); got != allowedOrigin {
+		t.Fatalf("expected allow-origin %q, got %q", allowedOrigin, got)
+	}
+	if got := rec.Header().Get("Access-Control-Allow-Methods"); got != allowedMethods {
+		t.Fatalf("expected allow-methods %q, got %q", allowedMethods, got)
+	}
+	if got := rec.Header().Get("Access-Control-Allow-Headers"); got != allowedHeaders {
+		t.Fatalf("expected allow-headers %q, got %q", allowedHeaders, got)
+	}
+}
+
+func TestCORSPreflight(t *testing.T) {
+	s := newTestServer(&fakeTaskService{})
+
+	rec := doRequestWithHeaders(
+		t,
+		s,
+		http.MethodOptions,
+		"/v1/tasks",
+		"",
+		map[string]string{
+			"Origin":                         allowedOrigin,
+			"Access-Control-Request-Method":  "POST",
+			"Access-Control-Request-Headers": "Content-Type",
+		},
+	)
+
+	if rec.Code != http.StatusNoContent {
+		t.Fatalf("expected 204, got %d", rec.Code)
+	}
+	if got := rec.Header().Get("Access-Control-Allow-Origin"); got != allowedOrigin {
+		t.Fatalf("expected allow-origin %q, got %q", allowedOrigin, got)
+	}
+	if rec.Body.Len() != 0 {
+		t.Fatalf("expected empty body, got %q", rec.Body.String())
+	}
+}
+
+func TestCORSIgnoresUnknownOrigin(t *testing.T) {
+	s := newTestServer(&fakeTaskService{})
+
+	rec := doRequestWithHeaders(
+		t,
+		s,
+		http.MethodGet,
+		"/healthz",
+		"",
+		map[string]string{"Origin": "http://evil.example.com"},
+	)
+
+	if got := rec.Header().Get("Access-Control-Allow-Origin"); got != "" {
+		t.Fatalf("expected no allow-origin header, got %q", got)
+	}
+}
+
+func TestListTasks(t *testing.T) {
+	fake := &fakeTaskService{
+		listTasks: []*task.Task{
+			{
+				ID:        "t1",
+				AgentID:   "demo-agent",
+				SessionID: "s1",
+				Input:     "现在几点了",
+				Status:    task.StatusCompleted,
+			},
+			{
+				ID:        "t2",
+				AgentID:   "demo-agent",
+				SessionID: "s1",
+				Input:     "你好",
+				Status:    task.StatusPending,
+			},
+		},
+	}
+	s := newTestServer(fake)
+
+	rec := doRequest(t, s, http.MethodGet, "/v1/tasks", "")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", rec.Code, rec.Body.String())
+	}
+
+	var resp struct {
+		Items []task.Task `json:"items"`
+		Total int         `json:"total"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+
+	if resp.Total != 2 {
+		t.Fatalf("expected total 2, got %d", resp.Total)
+	}
+	if len(resp.Items) != 2 {
+		t.Fatalf("expected 2 items, got %d", len(resp.Items))
+	}
+	if resp.Items[0].ID != "t1" || resp.Items[0].Input != "现在几点了" {
+		t.Fatalf("unexpected first item: %+v", resp.Items[0])
+	}
+	if resp.Items[1].Status != task.StatusPending {
+		t.Fatalf("expected pending, got %q", resp.Items[1].Status)
+	}
+}
+
+func TestListTasksEmpty(t *testing.T) {
+	s := newTestServer(&fakeTaskService{})
+
+	rec := doRequest(t, s, http.MethodGet, "/v1/tasks", "")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(rec.Body.Bytes(), &raw); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+
+	if string(raw["items"]) != "[]" {
+		t.Fatalf("expected items to be [], got %s", raw["items"])
+	}
+	if string(raw["total"]) != "0" {
+		t.Fatalf("expected total 0, got %s", raw["total"])
+	}
+}
+
+// TestTaskEventsStream 保证 SSE 事件流在加入 CORS 中间件后依然可用。
+func TestTaskEventsStream(t *testing.T) {
+	ch := make(chan event.Event, 1)
+	fake := &fakeTaskService{eventsCh: ch}
+	s := newTestServer(fake)
+
+	go func() {
+		ch <- event.Event{
+			Type: "status",
+			Data: map[string]string{"status": "running"},
+		}
+		close(ch)
+	}()
+
+	rec := doRequest(t, s, http.MethodGet, "/v1/tasks/t1/events", "")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+
+	if got := rec.Header().Get("Content-Type"); got != "text/event-stream" {
+		t.Fatalf("expected text/event-stream, got %q", got)
+	}
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "event: status") {
+		t.Fatalf("expected event line in body, got %q", body)
+	}
+	if !strings.Contains(body, `"status":"running"`) {
+		t.Fatalf("expected event data in body, got %q", body)
 	}
 }
