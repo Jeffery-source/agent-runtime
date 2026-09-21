@@ -13,6 +13,7 @@ import (
 
 	"github.com/Jeffery-source/agent-runtime/internal/agent"
 	"github.com/Jeffery-source/agent-runtime/internal/config"
+	"github.com/Jeffery-source/agent-runtime/internal/configloader"
 	"github.com/Jeffery-source/agent-runtime/internal/memory"
 	"github.com/Jeffery-source/agent-runtime/internal/model"
 	"github.com/Jeffery-source/agent-runtime/internal/runtime"
@@ -32,31 +33,32 @@ func main() {
 		log.Fatalf("load config: %v", err)
 	}
 
-	// 2. 领域组件（装配点 / composition root）。
+	// 2. 加载 Agent、Skill、Tool 的 YAML 定义。
+	definitions, err := configloader.NewLoader("config").Load()
+	if err != nil {
+		log.Fatalf("load runtime definitions: %v", err)
+	}
+
+	// 3. 领域组件（装配点 / composition root）。
 	agents := agent.NewRegistry()
 	sessions := session.NewManager()
 	tools := tool.NewRegistry()
 	taskManager := task.NewManager()
 	skills := skill.NewRegistry()
-	if err := skills.Register(&skill.Skill{
-		ID:          "demo_skill",
-		Name:        "Demo Skill",
-		Description: "用于测试 Agent Skill",
-		Instructions: `
-你正在使用 Demo Skill。
-
-回答问题时：
-1. 优先分析用户的问题
-2. 如果需要实时信息，使用可用工具获取
-3. 获取工具结果后再给出最终答案
-`,
-	}); err != nil {
-		log.Fatalf("register skill: %v", err)
+	for i := range definitions.Skills {
+		if err := skills.Register(&definitions.Skills[i]); err != nil {
+			log.Fatalf("register skill %q: %v", definitions.Skills[i].ID, err)
+		}
 	}
-	// 3. 模型客户端：优先真实 AI 网关，否则用演示模型。
+	for i := range definitions.Agents {
+		if err := agents.Register(&definitions.Agents[i]); err != nil {
+			log.Fatalf("register agent %q: %v", definitions.Agents[i].ID, err)
+		}
+	}
+	// 4. 模型客户端：优先真实 AI 网关，否则用演示模型。
 	modelClient := newModelClient(cfg)
 
-	// 4. Runtime 与任务服务（Worker 池）。
+	// 5. Runtime 与任务服务（Worker 池）。
 	rt := runtime.New(agents, sessions, modelClient, tools, taskManager)
 	rt.SetSkillRegistry(skills)
 	executor := runtime.NewExecutor(taskManager, rt)
@@ -67,12 +69,12 @@ func main() {
 		cfg.QueueSize,
 	)
 
-	// 5. 记忆持久化（可插拔）。
+	// 6. 记忆持久化（可插拔）。
 	if mem := newMemory(cfg); mem != nil {
 		rt.SetMemory(mem)
 	}
 
-	// 6. 任务恢复。
+	// 7. 任务恢复。
 	taskStore := task.NewFileStore(
 		filepath.Join(cfg.DataDir, "tasks.json"),
 	)
@@ -82,24 +84,33 @@ func main() {
 		&timeTool{},
 		&MoneyTool{},
 	}
-	// 7. 注册演示工具与 Agent。
+	// 8. 注册 Go 工具实现，并用 YAML 定义覆盖其模型元数据。
 
 	for _, t := range demoTools {
 		if err := tools.Register(t); err != nil {
 			log.Fatalf("register tool %s: %v", t.Name(), err)
 		}
 	}
-
-	if err := agents.Register(demoAgent()); err != nil {
-		log.Fatalf("register agent: %v", err)
+	for _, toolConfig := range definitions.Tools {
+		definition, err := toolConfig.Definition()
+		if err != nil {
+			log.Fatalf("build tool definition %q: %v", toolConfig.Name, err)
+		}
+		if err := tools.Configure(definition); err != nil {
+			if errors.Is(err, tool.ErrToolNotFound) {
+				log.Printf("tool definition %q has no registered Go implementation", definition.Name)
+				continue
+			}
+			log.Fatalf("configure tool %q: %v", definition.Name, err)
+		}
 	}
 
-	// 8. 演示模式下跑一次同步闭环。
+	// 9. 演示模式下跑一次同步闭环。
 	if cfg.Gateway.BaseURL == "" {
 		runDemo(rt, sessions, taskService)
 	}
 
-	// 9. 启动 HTTP 服务。
+	// 10. 启动 HTTP 服务。
 	handler := transport.NewServer(taskService, sessions).Handler()
 	srv := &http.Server{
 		Addr:    cfg.Server.Addr,
@@ -114,7 +125,7 @@ func main() {
 		}
 	}()
 
-	// 10. 优雅退出。
+	// 11. 优雅退出。
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	<-sig
@@ -166,21 +177,6 @@ func newMemory(cfg *config.Config) memory.Memory {
 	}
 
 	return store
-}
-
-func demoAgent() *agent.Agent {
-	return &agent.Agent{
-		ID:           "demo-agent",
-		Name:         "Demo Agent",
-		Description:  "你是一个助手。当用户询问当前时间时，使用 get_time 工具获取时间。",
-		Model:        "qwen3",
-		SystemPrompt: "You are a helpful assistant.",
-		Skills: []string{
-			"demo_skill",
-		},
-		Tools:         []string{"get_time", "get_money"},
-		MaxIterations: 5,
-	}
 }
 
 func runDemo(

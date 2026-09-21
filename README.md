@@ -111,8 +111,8 @@ domain：agent · session · message · tool · model · memory · agentcontext
 
 `cmd/agent-runtime/main.go` 按固定顺序完成装配：
 
-1. `config.Load("configs/config.json")` 加载配置；
-2. `new` 出 4 个容器：`agent.Registry`、`session.Manager`、`tool.Registry`、`task.Manager`；
+1. `config.Load("configs/config.json")` 加载运行配置，并由 `configloader.NewLoader("config").Load()` 加载 Agent、Skill、Tool YAML 定义；
+2. `new` 出 4 个容器：`agent.Registry`、`session.Manager`、`tool.Registry`、`task.Manager`；Agent 和 Skill YAML 分别注册到对应 Registry；
 3. 造模型客户端：`gateway.base_url` 非空 → `model.NewGatewayClient(baseURL, WithTimeout, WithRetries)`；为空 → 演示模型 `demoModel`；
 4. 注入组装：
    - `runtime.New(agents, sessions, modelClient, tools, taskManager)` → 引擎
@@ -120,7 +120,7 @@ domain：agent · session · message · tool · model · memory · agentcontext
    - `task.NewServiceWithPool(taskManager, executor, workers, queueSize)` → 任务服务
    - `rt.SetMemory(mem)` → 可选注入消息持久化
    - `transport.NewServer(taskService, sessions).Handler()` → HTTP 处理器
-5. 注册演示工具 `get_time` 与演示 Agent `demo-agent`；
+5. 注册 Go 工具实现；同名 Tool YAML 覆盖工具向模型声明的 `description/schema`，而 `Execute` 始终由 Go 实现提供；
 6. 若为演示模式（无网关），启动前先同步跑一次闭环验证；
 7. 启动 HTTP 服务，监听 `SIGINT/SIGTERM` 优雅退出（停收连接 → 关队列 → 等 Worker 排空 → 落盘任务）。
 
@@ -174,10 +174,15 @@ task.Service.Submit ──校验──▶ 创建 Task(pending) ──▶ 写入�
 │   └── demo.go                 #   演示模型 demoModel + 工具 timeTool
 ├── configs/
 │   └── config.json             # 运行配置（端口 / 网关 / Worker / 数据目录）
+├── config/
+│   ├── agents/                  # Agent YAML 定义
+│   ├── skills/                  # Skill YAML 定义
+│   └── tools/                   # Tool 元数据定义（实现仍在 Go 中注册）
 ├── internal/
 │   ├── agent/                  # 领域：Agent 定义 + 注册表
 │   ├── agentcontext/           # 领域：模型调用上下文组装
 │   ├── config/                 # 配置加载（默认值回退）
+│   ├── configloader/           # Agent / Skill / Tool YAML 加载
 │   ├── memory/                 # 记忆接口 + InMemory + JSON FileStore
 │   ├── message/                # 领域：消息模型（role / tool_calls）
 │   ├── model/                  # 模型抽象 + GatewayClient（超时/重试/工具下发）

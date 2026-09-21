@@ -1,0 +1,8 @@
+id: quality-analysis
+name: 质量分析技能
+description: 制造质量问题分析
+instructions: |
+  分析问题时：
+  1. 获取生产数据
+  2. 分析工艺参数
+  3. 输出可能原因

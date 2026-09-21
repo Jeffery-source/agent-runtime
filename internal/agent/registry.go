@@ -87,6 +87,7 @@ func cloneAgent(a *Agent) *Agent {
 	}
 
 	c := *a
+	c.Skills = append([]string(nil), a.Skills...)
 	c.Tools = append([]string(nil), a.Tools...)
 
 	return &c

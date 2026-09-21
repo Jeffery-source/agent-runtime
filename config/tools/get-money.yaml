@@ -1,0 +1,8 @@
+name: get_money
+description: 获取当前货币余额
+schema:
+  type: object
+  properties: {}
+  additionalProperties: false
+type: builtin
+enabled: true

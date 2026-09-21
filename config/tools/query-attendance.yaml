@@ -1,0 +1,4 @@
+name: query_attendance
+description: 查询考勤数据
+type: builtin
+enabled: true

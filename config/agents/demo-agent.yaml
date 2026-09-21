@@ -1,0 +1,13 @@
+id: demo-agent
+name: Demo Agent
+description: 测试 Agent
+model: qwen3
+temperature: 0.2
+system_prompt: |
+  你是一个企业智能助手。
+skills:
+  - quality-analysis
+tools:
+  - get_time
+  - get_money
+max_iterations: 10

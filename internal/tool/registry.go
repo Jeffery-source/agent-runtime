@@ -1,6 +1,7 @@
 package tool
 
 import (
+	"context"
 	"errors"
 	"sync"
 )
@@ -41,6 +42,53 @@ func (r *Registry) Register(t Tool) error {
 
 	return nil
 }
+
+// Configure applies YAML-owned metadata to an already registered Go tool.
+// It deliberately does not create a Tool: Execute remains a Go implementation.
+func (r *Registry) Configure(def Definition) error {
+	if def.Name == "" {
+		return errors.New("tool definition name is empty")
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	implementation, exists := r.tools[def.Name]
+	if !exists {
+		return ErrToolNotFound
+	}
+	if !def.Enabled {
+		delete(r.tools, def.Name)
+		return nil
+	}
+
+	r.tools[def.Name] = configuredTool{Tool: implementation, definition: def}
+	return nil
+}
+
+type configuredTool struct {
+	Tool
+	definition Definition
+}
+
+func (t configuredTool) Description() string {
+	if t.definition.Description != "" {
+		return t.definition.Description
+	}
+	return t.Tool.Description()
+}
+
+func (t configuredTool) InputSchema() []byte {
+	if len(t.definition.Schema) > 0 {
+		return t.definition.Schema
+	}
+	return t.Tool.InputSchema()
+}
+
+// Compile-time assertion that embedding preserves the execution implementation.
+var _ interface {
+	Execute(context.Context, []byte) (string, error)
+} = configuredTool{}
 
 func (r *Registry) Get(name string) (Tool, error) {
 	r.mu.RLock()

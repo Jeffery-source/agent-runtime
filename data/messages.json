@@ -170,6 +170,12 @@
       ]
     }
   ],
+  "24dedfbb-231b-4d50-a1e2-e8cd2c1016e8": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    }
+  ],
   "25bff358-7023-45a0-b940-9bbcce9b6338": [
     {
       "role": "user",
@@ -339,6 +345,53 @@
     {
       "role": "assistant",
       "content": "现在的时间是2026年9月17日16点52分31秒，账户余额还有5元。"
+    }
+  ],
+  "2e0dc16b-29b0-430c-a9a2-1e1a4102939e": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    }
+  ],
+  "31496fb4-c9ea-4de6-b4aa-36cef816ef2b": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_0cpgty1j",
+          "name": "get_time",
+          "arguments": "e30="
+        },
+        {
+          "id": "call_m054qlva",
+          "name": "get_money",
+          "arguments": "e30="
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "2026-09-21T16:05:59+08:00",
+      "tool_call_id": "call_0cpgty1j"
+    },
+    {
+      "role": "tool",
+      "content": "4",
+      "tool_call_id": "call_m054qlva"
+    },
+    {
+      "role": "assistant",
+      "content": "现在的时间是2026年9月21日16点05分，账户当前余额为4元。"
+    }
+  ],
+  "33bd821f-4cfe-483f-97da-523d1f3cae7b": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
     }
   ],
   "5c201d8a-90ea-42a8-bfc7-51e2008857a9": [
@@ -629,6 +682,12 @@
       "content": "当前时间是2026年9月14日 15:29，您的余额为6元。"
     }
   ],
+  "a83e7497-d843-419d-866f-4bbc1aa143ba": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
+    }
+  ],
   "ae0d92d4-b6e7-4ed1-968c-ec6e3491f5b0": [
     {
       "role": "user",
@@ -722,6 +781,12 @@
     {
       "role": "assistant",
       "content": "当前时间是2026年9月15日16点27分，账户余额为7元。"
+    }
+  ],
+  "b6567310-305d-4564-b91c-58cb46545f36": [
+    {
+      "role": "user",
+      "content": "现在是几点？还有多少余额？"
     }
   ],
   "b9a57b9e-dde9-4ec8-b40a-87f540e36f73": [

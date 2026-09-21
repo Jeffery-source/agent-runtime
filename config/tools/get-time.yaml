@@ -1,0 +1,8 @@
+name: get_time
+description: 获取当前服务器时间
+schema:
+  type: object
+  properties: {}
+  additionalProperties: false
+type: builtin
+enabled: true
